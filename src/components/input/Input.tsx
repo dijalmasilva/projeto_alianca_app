@@ -20,11 +20,8 @@ const Input = (props: Props) => {
 const styles = (theme: Theme) =>
   StyleSheet.create({
     input: {
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.card,
       padding: 16,
-      borderStyle: 'solid',
-      borderColor: theme.colors.primary,
-      borderWidth: 1,
       marginVertical: 8,
       borderRadius: 8,
     },

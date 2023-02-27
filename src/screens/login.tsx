@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {Alert, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
-import {PublicRoutes} from 'routes';
 import Button from '@/components/button/Button';
-import Input from '@/components/input/Input';
 import {useAppDispatch} from '@/hooks/store-hook';
-import {setMyPhoneNumber} from 'store/features/person/person';
 import PersonService from 'store/features/person/person-service';
+import PhoneInputWrapper from '@/components/input/PhoneInput';
+import {PublicRoutes} from 'routes';
+import {setMyPhoneNumber} from 'store/features/person/person';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -16,15 +16,27 @@ const LoginScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch();
   const [number, setNumber] = useState<string>('');
 
-  const login = () => {
-    if (!number) {
-      return Alert.prompt('Você precisa fornecer o número de telefone');
+  const validateNumber = (phoneNumber: string) => {
+    if (phoneNumber.length !== 14) {
+      Alert.alert(
+        'Telefone incorreto. Verifique se você digitou o DDD, e o "9" antes do número',
+      );
+      return false;
     }
-    console.log('requesting code: ');
-    console.log(PersonService.requestCode);
-    dispatch(PersonService.requestCode(number));
-    dispatch(setMyPhoneNumber(number));
-    navigation.navigate(PublicRoutes.confirmation);
+
+    return true;
+  };
+
+  const requestCode = async () => {
+    if (validateNumber(number)) {
+      const result = await dispatch(PersonService.requestCode(number));
+      if (PersonService.requestCode.fulfilled.match(result)) {
+        dispatch(setMyPhoneNumber(number));
+        navigation.navigate(PublicRoutes.confirmation);
+      } else {
+        Alert.alert(result.payload as string);
+      }
+    }
   };
 
   return (
@@ -36,13 +48,8 @@ const LoginScreen = ({navigation}: Props) => {
         />
         <Text style={styles.textLogo}>Projeto Aliança</Text>
       </View>
-      <Input
-        onChangeText={setNumber}
-        value={number}
-        placeholder="Insira o número de telefone"
-        keyboardType="phone-pad"
-      />
-      <Button onPress={login}>
+      <PhoneInputWrapper onChangeText={setNumber} />
+      <Button onPress={requestCode}>
         <Text style={styles.loginBtText}>Entrar</Text>
       </Button>
     </SafeAreaView>
