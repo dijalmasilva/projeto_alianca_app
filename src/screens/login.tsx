@@ -5,7 +5,8 @@ import {PublicRoutes} from 'routes';
 import Button from '@/components/button/Button';
 import Input from '@/components/input/Input';
 import {useAppDispatch} from '@/hooks/store-hook';
-import {setMyPhoneNumber} from 'store/features/person';
+import {setMyPhoneNumber} from 'store/features/person/person';
+import PersonService from 'store/features/person/person-service';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -19,6 +20,9 @@ const LoginScreen = ({navigation}: Props) => {
     if (!number) {
       return Alert.prompt('Você precisa fornecer o número de telefone');
     }
+    console.log('requesting code: ');
+    console.log(PersonService.requestCode);
+    dispatch(PersonService.requestCode(number));
     dispatch(setMyPhoneNumber(number));
     navigation.navigate(PublicRoutes.confirmation);
   };
