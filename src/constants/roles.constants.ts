@@ -1,0 +1,10 @@
+export enum ROLE {
+  ADMIN = 'ADMIN',
+  PASTOR = 'PASTOR',
+  DEACON = 'DIÁCONO',
+  COOPERATOR = 'COOPERADOR',
+  LEADER = 'LÍDER',
+  LEVITE = 'LEVITA',
+  SHEEP = 'OVELHA',
+  VISITOR = 'VISITANTE',
+}

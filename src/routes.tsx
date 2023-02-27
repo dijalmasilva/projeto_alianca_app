@@ -6,6 +6,7 @@ import HomeScreen from '@/screens/authenticated/home';
 import AboutScreen from '@/screens/about';
 import ConfirmationScreen from '@/screens/confirmation';
 import useTheme from 'theme/useTheme';
+import ProfileScreen from '@/screens/authenticated/profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,7 @@ export enum PublicRoutes {
 
 export enum PrivateRoutes {
   home = 'home',
+  profile = 'profile',
 }
 
 const MyStackRouter = () => {
@@ -51,6 +53,11 @@ const MyStackRouter = () => {
           name={PrivateRoutes.home}
           component={HomeScreen}
           options={{title: 'Página inicial'}}
+        />
+        <Stack.Screen
+          name={PrivateRoutes.profile}
+          component={ProfileScreen}
+          options={{title: 'Perfil'}}
         />
       </Stack.Navigator>
     </NavigationContainer>

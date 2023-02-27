@@ -1,15 +1,13 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from 'store/index';
 import PersonService from 'store/features/person/person-service';
+import {Person} from 'types/Person';
 
 type PersonSliceState = {
   loading: boolean;
-  me: {
-    name: string;
-    phoneNumber: string;
-  };
+  me: Person;
   auth: {
-    access_token?: string;
+    accessToken?: string;
     code?: string;
     error?: any;
   };
@@ -18,11 +16,16 @@ type PersonSliceState = {
 const initialState: PersonSliceState = {
   loading: false,
   me: {
+    id: '',
     name: '',
     phoneNumber: '',
+    birthday: '',
+    hasAlliance: false,
+    picture: '',
+    roles: [],
   },
   auth: {
-    access_token: '',
+    accessToken: '',
     code: '',
     error: undefined,
   },
@@ -32,11 +35,14 @@ const personSlice = createSlice({
   name: 'person',
   initialState,
   reducers: {
-    updateMe: (state, action: PayloadAction<typeof initialState.me>) => {
+    updateMe: (state, action: PayloadAction<Person>) => {
       state.me = action.payload;
     },
     setMyPhoneNumber: (state, action: PayloadAction<string>) => {
       state.me.phoneNumber = action.payload;
+    },
+    updateAccessToken: (state, action: PayloadAction<string>) => {
+      state.auth.accessToken = action.payload;
     },
   },
   extraReducers: builder => {
@@ -53,13 +59,29 @@ const personSlice = createSlice({
       const {payload} = action;
       state.auth.error = payload;
     });
+    builder.addCase(PersonService.getProfile.pending, state => {
+      state.loading = true;
+    });
+    builder.addCase(PersonService.getProfile.fulfilled, (state, action) => {
+      state.loading = false;
+      state.me = action.payload;
+    });
+    builder.addCase(PersonService.getProfile.rejected, state => {
+      state.loading = false;
+    });
   },
 });
 
 const personReducer = personSlice.reducer;
-export const {updateMe, setMyPhoneNumber} = personSlice.actions;
+export const {updateMe, setMyPhoneNumber, updateAccessToken} =
+  personSlice.actions;
 
-export const personLoadingSeletor = (state: RootState): boolean =>
+export const personLoadingSelector = (state: RootState): boolean =>
   state.person.loading;
+
+export const accessTokenSelector = (state: RootState): string =>
+  state.person.auth.accessToken || '';
+
+export const profileSelector = (state: RootState): Person => state.person.me;
 
 export default personReducer;

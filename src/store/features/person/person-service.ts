@@ -1,5 +1,6 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import httpClient from 'utils/http-client';
+import {HttpStatusCode} from 'axios';
 
 const requestCode = createAsyncThunk(
   'auth/requestCode',
@@ -20,8 +21,44 @@ const requestCode = createAsyncThunk(
   },
 );
 
+type AuthenticateData = {
+  username: string; //phoneNumber
+  password: string; //code
+};
+
+const login = createAsyncThunk(
+  'auth/login',
+  async (data: AuthenticateData, {rejectWithValue}) => {
+    return await httpClient()
+      .post('/auth/login', data)
+      .then(res => res.data)
+      .catch((err: any) => {
+        const {response} = err;
+        if (response && response.status === HttpStatusCode.Unauthorized) {
+          return rejectWithValue('Código inválido');
+        }
+
+        return rejectWithValue('Não foi possível confirmar o código');
+      });
+  },
+);
+
+const getProfile = createAsyncThunk(
+  'auth/profile',
+  async (accessToken: string, {rejectWithValue}) => {
+    return await httpClient(accessToken)
+      .get('/auth/profile')
+      .then(res => res.data)
+      .catch(() => {
+        return rejectWithValue('Error ao carregar dados do perfil');
+      });
+  },
+);
+
 const PersonService = {
   requestCode,
+  login,
+  getProfile,
 };
 
 export default PersonService;
