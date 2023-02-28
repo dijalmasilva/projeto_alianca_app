@@ -21,7 +21,7 @@ import {
 import {CommonActions, NavigationProp, Theme} from '@react-navigation/native';
 import PersonService from 'store/features/person/person-service';
 import {updateAccessToken} from 'store/features/person/person';
-import {PrivateRoutes, PublicRoutes} from 'routes';
+import {PrivateRoutes} from 'routes';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -62,7 +62,7 @@ const ConfirmationScreen = ({navigation}: Props) => {
       if (PersonService.login.fulfilled.match(resultLogin)) {
         const {payload} = resultLogin;
         dispatch(updateAccessToken(payload.accessToken));
-        if (!payload.isNewUser) {
+        if (payload.isNewUser) {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,

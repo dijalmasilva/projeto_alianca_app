@@ -24,7 +24,7 @@ const ProfileScreen = ({navigation}: Props) => {
       navigation.setOptions({title: 'Complete seu perfil'});
       dispatch(PersonService.getProfile(token));
     }
-  }, [profile]);
+  }, []);
 
   if (loading) {
     return (
