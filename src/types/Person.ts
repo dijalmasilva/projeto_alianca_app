@@ -1,4 +1,5 @@
 import {ROLE} from 'constants/roles.constants';
+import {Church} from './Church';
 
 export type Person = {
   id: string;
@@ -8,4 +9,5 @@ export type Person = {
   hasAlliance?: boolean;
   phoneNumber: string;
   roles: ROLE[];
+  churchs: Church[];
 };

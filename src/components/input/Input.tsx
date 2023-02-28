@@ -1,25 +1,40 @@
 import React from 'react';
-import {StyleSheet, TextInput, TextInputProps} from 'react-native';
+import {StyleSheet, Text, TextInput, TextInputProps, View} from 'react-native';
 import useTheme from 'theme/useTheme';
 import {Theme} from '@react-navigation/native';
 
-type Props = TextInputProps;
+type Props = TextInputProps & {
+  label: string;
+};
 
 const Input = (props: Props) => {
   const theme = useTheme();
+  const styleResult = styles(theme);
 
   return (
-    <TextInput
-      {...props}
-      placeholderTextColor={theme.colors.text}
-      style={styles(theme).input}
-    />
+    <View style={styleResult.inputView}>
+      <Text style={styleResult.label}>{props.label}:</Text>
+      <TextInput
+        {...props}
+        placeholderTextColor={theme.colors.text}
+        style={styleResult.input}
+      />
+    </View>
   );
 };
 
 const styles = (theme: Theme) =>
   StyleSheet.create({
+    inputView: {
+      width: '100%',
+    },
+    label: {
+      fontSize: 16,
+      marginLeft: 8,
+      fontWeight: 'bold',
+    },
     input: {
+      width: '100%',
       backgroundColor: theme.colors.card,
       padding: 16,
       marginVertical: 8,

@@ -8,7 +8,10 @@ const Button = ({children, ...props}: PressableProps) => {
 
   return (
     <Pressable
-      style={[{backgroundColor: theme.colors.primary}, styles.mainButton]}
+      style={[
+        {backgroundColor: theme.colors.primary, shadowColor: theme.colors.text},
+        styles.mainButton,
+      ]}
       {...props}>
       {children}
     </Pressable>
@@ -17,8 +20,13 @@ const Button = ({children, ...props}: PressableProps) => {
 
 const styles = StyleSheet.create({
   mainButton: {
+    minWidth: 200,
     padding: 16,
     borderRadius: 8,
+    alignItems: 'center',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    marginBottom: 8,
   },
 });
 

@@ -21,6 +21,10 @@ export enum PrivateRoutes {
   profile = 'profile',
 }
 
+const contentDefaultStyles = {
+  padding: 16,
+};
+
 const MyStackRouter = () => {
   const theme = useTheme();
 
@@ -29,9 +33,7 @@ const MyStackRouter = () => {
       <Stack.Navigator
         initialRouteName={PublicRoutes.login}
         screenOptions={{
-          contentStyle: {
-            padding: 16,
-          },
+          contentStyle: contentDefaultStyles,
         }}>
         <Stack.Screen
           name={PublicRoutes.login}
@@ -44,6 +46,7 @@ const MyStackRouter = () => {
           options={{
             title: 'Confirmação',
             contentStyle: {
+              ...contentDefaultStyles,
               justifyContent: 'center',
             },
           }}
@@ -61,7 +64,13 @@ const MyStackRouter = () => {
         <Stack.Screen
           name={PrivateRoutes.profile}
           component={ProfileScreen}
-          options={{title: 'Perfil'}}
+          options={{
+            title: 'Perfil',
+            contentStyle: {
+              ...contentDefaultStyles,
+              alignItems: 'flex-start',
+            },
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

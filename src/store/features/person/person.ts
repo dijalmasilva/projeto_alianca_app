@@ -23,6 +23,7 @@ const initialState: PersonSliceState = {
     hasAlliance: false,
     picture: '',
     roles: [],
+    churchs: [],
   },
   auth: {
     accessToken: '',
