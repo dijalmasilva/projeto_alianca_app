@@ -35,7 +35,7 @@ const ProfileScreen = ({navigation}: Props) => {
   }
 
   return (
-    <View>
+    <View style={styles.profileView}>
       <Text>Name: {profile.name}</Text>
     </View>
   );
@@ -45,6 +45,10 @@ const styles = StyleSheet.create({
   viewLoading: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  profileView: {
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
 });
 

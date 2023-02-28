@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {Alert, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import Button from '@/components/button/Button';
 import {useAppDispatch} from '@/hooks/store-hook';
@@ -41,17 +49,19 @@ const LoginScreen = ({navigation}: Props) => {
 
   return (
     <SafeAreaView>
-      <View style={styles.logoView}>
-        <Image
-          source={require('@/assets/images/logo.png')}
-          style={styles.logo}
-        />
-        <Text style={styles.textLogo}>Projeto Aliança</Text>
-      </View>
-      <PhoneInputWrapper onChangeText={setNumber} />
-      <Button onPress={requestCode}>
-        <Text style={styles.loginBtText}>Entrar</Text>
-      </Button>
+      <ScrollView>
+        <View style={styles.logoView}>
+          <Image
+            source={require('@/assets/images/logo.png')}
+            style={styles.logo}
+          />
+          <Text style={styles.textLogo}>Projeto Aliança</Text>
+        </View>
+        <PhoneInputWrapper onChangeText={setNumber}  />
+        <Button onPress={requestCode}>
+          <Text style={styles.loginBtText}>Entrar</Text>
+        </Button>
+      </ScrollView>
     </SafeAreaView>
   );
 };

@@ -31,7 +31,6 @@ const MyStackRouter = () => {
         screenOptions={{
           contentStyle: {
             padding: 16,
-            justifyContent: 'center',
           },
         }}>
         <Stack.Screen
@@ -42,7 +41,12 @@ const MyStackRouter = () => {
         <Stack.Screen
           name={PublicRoutes.confirmation}
           component={ConfirmationScreen}
-          options={{title: 'Confirmação'}}
+          options={{
+            title: 'Confirmação',
+            contentStyle: {
+              justifyContent: 'center',
+            },
+          }}
         />
         <Stack.Screen
           name={PublicRoutes.about}

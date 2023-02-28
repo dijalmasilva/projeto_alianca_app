@@ -138,6 +138,7 @@ const ConfirmationScreen = ({navigation}: Props) => {
 const styles = (theme: Theme) =>
   StyleSheet.create({
     confirmationView: {
+      height: '100%',
       justifyContent: 'center',
       alignItems: 'center',
       gap: 28,
@@ -153,7 +154,7 @@ const styles = (theme: Theme) =>
     },
     title: {textAlign: 'center', fontSize: 30},
     codeFieldRoot: {
-      marginBottom: 12,
+      paddingBottom: 24,
     },
     cell: {
       width: 40,
