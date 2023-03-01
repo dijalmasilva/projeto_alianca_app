@@ -26,7 +26,8 @@ const initialState: PersonSliceState = {
     churchs: [],
   },
   auth: {
-    accessToken: '',
+    accessToken:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Iis1NTgzOTk4MDU4OTcxIiwic3ViIjoiNzhkMTAwOWEtOTIwMy00YTdlLWI0MzctYWQxODFmZTBjY2I0Iiwicm9sZXMiOlsiVklTSVRBTlRFIiwiQURNSU4iLCJQQVNUT1IiLCJMRVZJVEEiLCJMw41ERVIiLCJPVkVMSEEiXSwibmFtZSI6IiIsImlhdCI6MTY3NzY0MjMyNiwiZXhwIjoxNjgwMzIwNzI2fQ.YVkoqiFOawp6y9UBCbnH-lTV3EoANeD8GVuNR2EIlDI',
     code: '',
     error: undefined,
   },

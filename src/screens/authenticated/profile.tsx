@@ -13,6 +13,9 @@ import Avatar from '@/components/avatar/Avatar';
 import Input from '@/components/input/Input';
 import Button from '@/components/button/Button';
 import {PrivateRoutes} from 'routes';
+import SwitchWrapper from '@/components/switch/SwitchWrapper';
+import CalendarWrapper, {FORMAT_CALENDAR} from '@/components/calendar/Calendar';
+import {format} from 'date-fns/esm';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -33,6 +36,10 @@ const ProfileScreen = ({navigation}: Props) => {
     }
   }, []);
 
+  useEffect(() => {
+    setProfileState(profile);
+  }, [profile]);
+
   const onChangeName = (value: string) => {
     setProfileState({...profileState, name: value});
   };
@@ -41,9 +48,8 @@ const ProfileScreen = ({navigation}: Props) => {
     setProfileState({...profileState, birthday: value});
   };
 
-  const onChangeAlliance = (value: string) => {
-    const hasAlliance = value.toLowerCase() === 'sim';
-    setProfileState({...profileState, hasAlliance});
+  const onChangeAlliance = (value: boolean) => {
+    setProfileState({...profileState, hasAlliance: value});
   };
 
   const onSubmit = () => {
@@ -73,22 +79,23 @@ const ProfileScreen = ({navigation}: Props) => {
               value={profileState.name}
               onChangeText={onChangeName}
             />
+            <View style={[styles.keepWidth, {gap: 8}]}>
+              <Text style={styles.label}>Data de nascimento:</Text>
+              <CalendarWrapper
+                current="2023-03-5"
+                enableSwipeMonths
+                maxDate={format(new Date(), FORMAT_CALENDAR)}
+              />
+            </View>
+            <View style={styles.viewAlliance}>
+              <Text style={styles.label}>Possui aliança com Jesus?</Text>
+              <SwitchWrapper onChange={onChangeAlliance} />
+            </View>
             <Input
-              label="Data de nascimento"
-              placeholder="dd/mm/aaaa"
-              value={profileState.birthday}
-              onChangeText={onChangeBirthday}
-            />
-            <Input
-              label="Possui aliança com Jesus?"
-              placeholder="Sim"
-              value={profileState.hasAlliance ? 'Sim' : 'Não'}
-              onChangeText={onChangeAlliance}
-            />
-            <Input
+              aria-disabled
               label="Igreja que congrega"
               placeholder="Sede Cajazeiras"
-              onChangeText={onChangeAlliance}
+              onChangeText={onChangeName}
             />
           </View>
           <Button onPress={onSubmit}>
@@ -126,6 +133,15 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     fontWeight: 'bold',
     color: 'white',
+  },
+  label: {
+    fontSize: 16,
+    marginLeft: 8,
+    fontWeight: 'bold',
+  },
+  viewAlliance: {
+    gap: 8,
+    alignItems: 'flex-start',
   },
 });
 

@@ -1,20 +1,23 @@
 import React from 'react';
 import {useTheme} from '@react-navigation/native';
-import {Pressable, StyleSheet} from 'react-native';
-import {PressableProps} from 'react-native/Libraries/Components/Pressable/Pressable';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from 'react-native';
 
-const Button = ({children, ...props}: PressableProps) => {
+const Button = ({children, ...props}: TouchableOpacityProps) => {
   const theme = useTheme();
 
   return (
-    <Pressable
+    <TouchableOpacity
       style={[
         {backgroundColor: theme.colors.primary, shadowColor: theme.colors.text},
         styles.mainButton,
       ]}
       {...props}>
       {children}
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 

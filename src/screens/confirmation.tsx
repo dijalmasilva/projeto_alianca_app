@@ -167,7 +167,7 @@ const styles = (theme: Theme) =>
       backgroundColor: theme.colors.card,
     },
     focusCell: {
-      borderColor: '#000',
+      borderColor: '#ffffff',
     },
   });
 

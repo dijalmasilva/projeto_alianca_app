@@ -31,7 +31,7 @@ const MyStackRouter = () => {
   return (
     <NavigationContainer theme={theme}>
       <Stack.Navigator
-        initialRouteName={PublicRoutes.login}
+        initialRouteName={PrivateRoutes.profile}
         screenOptions={{
           contentStyle: contentDefaultStyles,
         }}>

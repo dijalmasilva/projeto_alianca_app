@@ -10,7 +10,6 @@ const requestCode = createAsyncThunk(
       .then(res => res.data)
       .catch(error => {
         const {status} = error;
-        console.log(status);
         if (status === 404) {
           return rejectWithValue('Telefone não encontrado');
         }
