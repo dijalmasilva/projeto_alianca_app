@@ -1,4 +1,5 @@
 import {
+  Dimensions,
   FlatList,
   Modal,
   SafeAreaView,
@@ -46,8 +47,12 @@ const YearModal = ({year, showModal, onCloseModal, onChange}: Props) => {
   };
 
   return (
-    <Modal visible={showModal}>
-      <SafeAreaView>
+    <Modal visible={showModal} animationType="slide">
+      <SafeAreaView
+        style={{
+          backgroundColor: theme.colors.card,
+          height: Dimensions.get('screen').height,
+        }}>
         <FlatList
           ref={ref}
           data={arr}

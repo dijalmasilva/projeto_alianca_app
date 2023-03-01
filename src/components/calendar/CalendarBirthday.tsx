@@ -1,77 +1,39 @@
-import {Calendar, CalendarProps, LocaleConfig} from 'react-native-calendars';
+import {Calendar, CalendarProps} from 'react-native-calendars';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import useTheme from 'theme/useTheme';
-import React, {useState} from 'react';
-import {ptBR} from 'date-fns/locale';
+import React, {useEffect, useState} from 'react';
 import {
-  setDefaultOptions,
+  addMonths,
   format,
   getYear,
-  subMonths,
+  parse,
   setYear,
-  addMonths,
-  toDate,
+  subMonths,
 } from 'date-fns/esm';
 import YearModal from '@/components/calendar/YearModal';
+import {DATE_FORMATS, runConfigDate} from './calendar.config';
 
-setDefaultOptions({locale: ptBR});
+runConfigDate();
 
-LocaleConfig.locales.pt_BR = {
-  monthNames: [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro',
-  ],
-  monthNamesShort: [
-    'Jan',
-    'Fev',
-    'Mar',
-    'Abr',
-    'Mai',
-    'Jun',
-    'Jul',
-    'Ago',
-    'Set',
-    'Out',
-    'Nov.',
-    'Dez',
-  ],
-  dayNames: [
-    'Domingo',
-    'Segunda',
-    'Terça',
-    'Quarta',
-    'Quinta',
-    'Sexta',
-    'Sábado',
-  ],
-  dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
-  today: 'Hoje',
+type Props = CalendarProps & {
+  onSelect: (date: string) => void;
 };
 
-LocaleConfig.defaultLocale = 'pt_BR';
-
-export const FORMAT_CALENDAR = 'yyyy-MM-dd';
-const FORMAT_TITLE = "MMMM'/'yyyy";
-
-const CalendarWrapper = (props: CalendarProps) => {
+const CalendarBirthday = ({onSelect, ...props}: Props) => {
   const [showYearModal, setShowYearModal] = useState(false);
   const [currentAsData, setCurrentAsData] = useState(new Date());
+  const [markedData, setMarkedData] = useState(new Date());
 
-  const currentFormatted = format(currentAsData, FORMAT_CALENDAR);
+  const currentFormatted = format(currentAsData, DATE_FORMATS.calendar);
+  const markedDataFormatted = format(markedData, DATE_FORMATS.calendar);
 
   const onChangeYear = (year: number) => {
     setCurrentAsData(prev => setYear(prev, year));
   };
+
+  useEffect(() => {
+    onSelect(markedDataFormatted);
+  }, [markedDataFormatted]);
 
   const theme = useTheme();
   return (
@@ -80,9 +42,22 @@ const CalendarWrapper = (props: CalendarProps) => {
         {...props}
         key={currentFormatted}
         current={currentFormatted}
+        markingType="custom"
+        markedDates={{
+          [markedDataFormatted]: {
+            customStyles: {
+              container: {
+                backgroundColor: theme.colors.primary,
+              },
+              text: {
+                color: theme.colors.text,
+              },
+            },
+          },
+        }}
         customHeaderTitle={
           <TouchableOpacity onPress={() => setShowYearModal(true)}>
-            <Text>{format(currentAsData, FORMAT_TITLE)}</Text>
+            <Text>{format(currentAsData, DATE_FORMATS.title)}</Text>
           </TouchableOpacity>
         }
         style={styles.calendar}
@@ -106,9 +81,11 @@ const CalendarWrapper = (props: CalendarProps) => {
         onPressArrowRight={() => {
           setCurrentAsData(prev => addMonths(prev, 1));
         }}
-        onPress={date => {
+        onDayPress={date => {
           if (date) {
-            setCurrentAsData(toDate(date.timestamp));
+            setMarkedData(
+              parse(date.dateString, DATE_FORMATS.calendar, markedData),
+            );
           }
         }}
       />
@@ -128,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CalendarWrapper;
+export default CalendarBirthday;

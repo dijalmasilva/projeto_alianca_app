@@ -1,6 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import httpClient from 'utils/http-client';
 import {HttpStatusCode} from 'axios';
+import {Person} from 'types/Person';
 
 const requestCode = createAsyncThunk(
   'auth/requestCode',
@@ -54,10 +55,28 @@ const getProfile = createAsyncThunk(
   },
 );
 
+type UpdateProfileData = {
+  accessToken: string;
+  data: Person;
+};
+
+const updateProfile = createAsyncThunk(
+  'person/profile-update',
+  async (body: UpdateProfileData, {rejectWithValue}) => {
+    return await httpClient(body.accessToken)
+      .patch('/person', body.data)
+      .then(res => res.data)
+      .catch(() => {
+        return rejectWithValue('Não foi possível atualizar seu perfil');
+      });
+  },
+);
+
 const PersonService = {
   requestCode,
   login,
   getProfile,
+  updateProfile,
 };
 
 export default PersonService;

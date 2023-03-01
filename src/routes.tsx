@@ -7,6 +7,8 @@ import AboutScreen from '@/screens/about';
 import ConfirmationScreen from '@/screens/confirmation';
 import useTheme from 'theme/useTheme';
 import ProfileScreen from '@/screens/authenticated/profile';
+import {useAppSelector} from '@/hooks/store-hook';
+import {accessTokenSelector} from 'store/features/person/person';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,11 +29,12 @@ const contentDefaultStyles = {
 
 const MyStackRouter = () => {
   const theme = useTheme();
+  const token = useAppSelector(accessTokenSelector);
 
   return (
     <NavigationContainer theme={theme}>
       <Stack.Navigator
-        initialRouteName={PrivateRoutes.profile}
+        initialRouteName={token ? PrivateRoutes.home : PublicRoutes.login}
         screenOptions={{
           contentStyle: contentDefaultStyles,
         }}>
