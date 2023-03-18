@@ -1,7 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import httpClient from 'utils/http-client';
 import {HttpStatusCode} from 'axios';
-import {Person} from 'types/Person';
+import {Prisma} from '@prisma/client';
 
 const requestCode = createAsyncThunk(
   'auth/requestCode',
@@ -47,7 +47,7 @@ const getProfile = createAsyncThunk(
   'auth/profile',
   async (accessToken: string, {rejectWithValue}) => {
     return await httpClient(accessToken)
-      .get('/auth/profile')
+      .post('/auth/profile')
       .then(res => res.data)
       .catch(() => {
         return rejectWithValue('Error ao carregar dados do perfil');
@@ -57,14 +57,15 @@ const getProfile = createAsyncThunk(
 
 type UpdateProfileData = {
   accessToken: string;
-  data: Person;
+  id: number;
+  person: Prisma.PersonUpdateInput;
 };
 
 const updateProfile = createAsyncThunk(
   'person/profile-update',
-  async (body: UpdateProfileData, {rejectWithValue}) => {
-    return await httpClient(body.accessToken)
-      .patch('/person', body.data)
+  async (data: UpdateProfileData, {rejectWithValue}) => {
+    return await httpClient(data.accessToken)
+      .patch(`/person/${data.id}`, data.person)
       .then(res => res.data)
       .catch(() => {
         return rejectWithValue('Não foi possível atualizar seu perfil');

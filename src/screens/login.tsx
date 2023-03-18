@@ -14,7 +14,7 @@ import {useAppDispatch} from '@/hooks/store-hook';
 import PersonService from 'store/features/person/person-service';
 import PhoneInputWrapper from '@/components/input/PhoneInput';
 import {PublicRoutes} from 'routes';
-import {setMyPhoneNumber} from 'store/features/person/person';
+import {PersonActions} from 'store/features/person/person';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -39,7 +39,7 @@ const LoginScreen = ({navigation}: Props) => {
     if (validateNumber(number)) {
       const result = await dispatch(PersonService.requestCode(number));
       if (PersonService.requestCode.fulfilled.match(result)) {
-        dispatch(setMyPhoneNumber(number));
+        dispatch(PersonActions.setMyPhoneNumber(number));
         navigation.navigate(PublicRoutes.confirmation);
       } else {
         Alert.alert(result.payload as string);
@@ -57,7 +57,7 @@ const LoginScreen = ({navigation}: Props) => {
           />
           <Text style={styles.textLogo}>Projeto Aliança</Text>
         </View>
-        <PhoneInputWrapper onChangeText={setNumber}  />
+        <PhoneInputWrapper onChangeText={setNumber} />
         <Button onPress={requestCode}>
           <Text style={styles.loginBtText}>Entrar</Text>
         </Button>

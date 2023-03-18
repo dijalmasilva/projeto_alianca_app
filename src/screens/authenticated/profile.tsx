@@ -9,13 +9,8 @@ import {
 } from 'react-native';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import PersonService from 'store/features/person/person-service';
-import {
-  accessTokenSelector,
-  personLoadingSelector,
-  profileSelector,
-  updateMe,
-} from 'store/features/person/person';
-import {NavigationProp} from '@react-navigation/native';
+import {PersonActions} from 'store/features/person/person';
+import { CommonActions, NavigationProp } from "@react-navigation/native";
 import Avatar from '@/components/avatar/Avatar';
 import Input from '@/components/input/Input';
 import Button from '@/components/button/Button';
@@ -25,8 +20,9 @@ import CalendarBirthday from '@/components/calendar/CalendarBirthday';
 import {format} from 'date-fns/esm';
 import {DATE_FORMATS} from '@/components/calendar/calendar.config';
 import SelectChurchModal from '@/components/select/select-church-modal';
-import {Church} from 'types/Church';
 import {ROLE} from 'constants/roles.constants';
+import PersonSelectors from 'store/features/person/selectors';
+import {Church} from '@prisma/client';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -34,9 +30,10 @@ type Props = {
 
 const ProfileScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch();
-  const profile = useAppSelector(profileSelector);
-  const token = useAppSelector(accessTokenSelector);
-  const loading = useAppSelector(personLoadingSelector);
+  const profile = useAppSelector(PersonSelectors.profile);
+  const token = useAppSelector(PersonSelectors.accessToken);
+  const loading = useAppSelector(PersonSelectors.loading);
+  const [church, setChurch] = useState<Church | undefined>(undefined);
 
   const [profileState, setProfileState] = useState(profile);
 
@@ -48,6 +45,7 @@ const ProfileScreen = ({navigation}: Props) => {
   }, []);
 
   useEffect(() => {
+    console.log(JSON.stringify(profile, null, 2));
     setProfileState(profile);
   }, [profile]);
 
@@ -93,17 +91,47 @@ const ProfileScreen = ({navigation}: Props) => {
     }
   };
 
-  const onChangeChurch = (church: Church) => {
-    setProfileState({...profileState, churchs: [church]});
+  const onChangeChurch = (churchSelected: Church) => {
+    setChurch(churchSelected);
   };
 
   const onSubmit = async () => {
-    if (validateForm()) {
+    if (validateForm() && church) {
       const result = await dispatch(
-        PersonService.updateProfile({accessToken: token, data: profileState}),
+        PersonService.updateProfile({
+          accessToken: token,
+          id: profileState.id,
+          person: {
+            ...profileState,
+            churchs: {
+              connectOrCreate: {
+                create: {
+                  churchId: church.id,
+                  assignedAt: new Date().toISOString(),
+                },
+                where: {
+                  personId_churchId: {
+                    personId: profileState.id,
+                    churchId: church.id,
+                  },
+                },
+              },
+            },
+          },
+        }),
       );
       if (PersonService.updateProfile.fulfilled.match(result)) {
-        dispatch(updateMe(profileState));
+        dispatch(PersonActions.updateMe(profileState));
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: PrivateRoutes.home,
+              },
+            ],
+          }),
+        );
         navigation.navigate(PrivateRoutes.home);
       } else {
         Alert.alert(result.payload as string);
@@ -149,11 +177,7 @@ const ProfileScreen = ({navigation}: Props) => {
               <Text style={styles.label}>Qual igreja congrega?</Text>
               <SelectChurchModal
                 onSelect={onChangeChurch}
-                selected={
-                  profileState.churchs.length > 0
-                    ? profileState.churchs[0].id
-                    : undefined
-                }
+                selected={church ? church.id : undefined}
                 placeholder="Clique aqui para selecionar"
               />
             </View>

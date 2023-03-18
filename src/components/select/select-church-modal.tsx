@@ -11,23 +11,23 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {Church} from 'types/Church';
 import useTheme from 'theme/useTheme';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
-import {churchsSelector} from 'store/features/church/church';
 import ChurchService from 'store/features/church/church-service';
-import {accessTokenSelector} from 'store/features/person/person';
 import Avatar from '@/components/avatar/Avatar';
+import PersonSelectors from 'store/features/person/selectors';
+import ChurchSelectors from 'store/features/church/selectors';
+import {Church} from '@prisma/client';
 
 type Props = {
   onSelect: (value: Church) => void;
-  selected?: string;
+  selected?: number;
   placeholder: string;
 };
 
 const SelectChurchModal = ({onSelect, placeholder, selected}: Props) => {
-  const token = useAppSelector(accessTokenSelector);
-  const churchs = useAppSelector(churchsSelector);
+  const token = useAppSelector(PersonSelectors.accessToken);
+  const churchs = useAppSelector(ChurchSelectors.getChurchs);
   const dispatch = useAppDispatch();
   const theme = useTheme();
   const [isVisible, setVisible] = useState(false);
@@ -50,6 +50,7 @@ const SelectChurchModal = ({onSelect, placeholder, selected}: Props) => {
       setVisible(prev => !prev);
     } else {
       Alert.alert('Não há igrejas cadastradas');
+      dispatch(ChurchService.getChurchs(token));
     }
   };
 
@@ -104,11 +105,12 @@ const SelectChurchModal = ({onSelect, placeholder, selected}: Props) => {
                       <Text style={styles.textAddress}>
                         <Text style={styles.textAddressLabel}>Endereço: </Text>
                         {[
-                          item.address,
-                          item.number,
-                          item.neighborhood,
-                          item.city,
-                          item.state,
+                          item.address_street,
+                          item.address_number,
+                          item.address_neighborhood,
+                          item.address_city,
+                          item.address_state,
+                          item.address_zipcode,
                         ]
                           .filter(i => i)
                           .join(', ')}

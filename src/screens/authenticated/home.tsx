@@ -1,10 +1,10 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {useAppSelector} from '@/hooks/store-hook';
-import {profileSelector} from 'store/features/person/person';
+import PersonSelectors from 'store/features/person/selectors';
 
 const HomeScreen = () => {
-  const profile = useAppSelector(profileSelector);
+  const profile = useAppSelector(PersonSelectors.profile);
 
   return (
     <View style={styles.homeView}>

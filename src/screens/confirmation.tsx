@@ -20,8 +20,9 @@ import {
 } from 'react-native-confirmation-code-field';
 import {CommonActions, NavigationProp, Theme} from '@react-navigation/native';
 import PersonService from 'store/features/person/person-service';
-import {updateAccessToken} from 'store/features/person/person';
 import {PrivateRoutes} from 'routes';
+import {PersonActions} from 'store/features/person/person';
+import PersonSelectors from 'store/features/person/selectors';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -32,8 +33,8 @@ const CELL_COUNT = 6;
 const ConfirmationScreen = ({navigation}: Props) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const me = useAppSelector(state => state.person.me);
-  const code = useAppSelector(state => state.person.auth.code);
+  const me = useAppSelector(PersonSelectors.profile);
+  const {code} = useAppSelector(PersonSelectors.auth);
 
   const hintTextStyle = {
     color: theme.colors.primary,
@@ -61,7 +62,7 @@ const ConfirmationScreen = ({navigation}: Props) => {
 
       if (PersonService.login.fulfilled.match(resultLogin)) {
         const {payload} = resultLogin;
-        dispatch(updateAccessToken(payload.accessToken));
+        dispatch(PersonActions.updateAccessToken(payload.accessToken));
         if (payload.isNewUser) {
           navigation.dispatch(
             CommonActions.reset({

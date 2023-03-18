@@ -1,7 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {Church} from 'types/Church';
 import ChurchService from 'store/features/church/church-service';
-import {RootState} from 'store/index';
+import {Church} from '@prisma/client';
 
 type ChurchState = {
   loading: boolean;
@@ -27,14 +26,13 @@ const churchSlice = createSlice({
     builder.addCase(
       ChurchService.getChurchs.fulfilled,
       (state, action: PayloadAction<Church[]>) => {
-        (state.loading = false), (state.churchs = action.payload);
+        state.loading = false;
+        state.churchs = action.payload;
       },
     );
   },
 });
 
 const churchReducer = churchSlice.reducer;
-
-export const churchsSelector = (state: RootState) => state.church.churchs;
 
 export default churchReducer;

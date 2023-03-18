@@ -1,11 +1,12 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {RootState} from 'store/index';
 import PersonService from 'store/features/person/person-service';
-import {Person} from 'types/Person';
+import {Person} from '@prisma/client';
+
+export type PersonProfile = Omit<Person, 'createdAt'>;
 
 type PersonSliceState = {
   loading: boolean;
-  me: Person;
+  me: PersonProfile;
   auth: {
     accessToken?: string;
     code?: string;
@@ -16,14 +17,20 @@ type PersonSliceState = {
 const initialState: PersonSliceState = {
   loading: false,
   me: {
-    id: '',
+    id: 0,
     name: '',
     phoneNumber: '',
     birthday: '',
     hasAlliance: false,
     picture: '',
     roles: [],
-    churchs: [],
+    active: false,
+    address_neighborhood: '',
+    address_city: '',
+    address_state: '',
+    address_number: '',
+    address_street: '',
+    address_zipcode: '',
   },
   auth: {
     accessToken: '',
@@ -36,7 +43,7 @@ const personSlice = createSlice({
   name: 'person',
   initialState,
   reducers: {
-    updateMe: (state, action: PayloadAction<Person>) => {
+    updateMe: (state, action: PayloadAction<PersonProfile>) => {
       state.me = action.payload;
     },
     setMyPhoneNumber: (state, action: PayloadAction<string>) => {
@@ -64,6 +71,7 @@ const personSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(PersonService.getProfile.fulfilled, (state, action) => {
+      console.log(JSON.stringify(action.payload, null, 2));
       state.loading = false;
       state.me = action.payload;
     });
@@ -74,15 +82,6 @@ const personSlice = createSlice({
 });
 
 const personReducer = personSlice.reducer;
-export const {updateMe, setMyPhoneNumber, updateAccessToken} =
-  personSlice.actions;
-
-export const personLoadingSelector = (state: RootState): boolean =>
-  state.person.loading;
-
-export const accessTokenSelector = (state: RootState): string =>
-  state.person.auth.accessToken || '';
-
-export const profileSelector = (state: RootState): Person => state.person.me;
+export const PersonActions = personSlice.actions;
 
 export default personReducer;

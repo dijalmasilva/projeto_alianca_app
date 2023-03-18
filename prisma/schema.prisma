@@ -1,0 +1,183 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+    ADMIN
+    PASTOR
+    DIACONO
+    COOPERADOR
+    LIDER
+    LEVITA
+    OVELHA
+    VISITANTE
+}
+
+model Person {
+    id                      Int                         @id @default(autoincrement())
+    name                    String
+    phoneNumber             String                      @unique
+    birthday                String
+    picture                 String?
+    hasAlliance             Boolean                     @default(false)
+    roles                   Role[]                      @default([VISITANTE])
+    churchs                 PersonsOnChurchs[]
+    active                  Boolean                     @default(true)
+    address_street          String?
+    address_number          String?
+    address_neighborhood    String?
+    address_city            String?
+    address_state           String?
+    address_zipcode         String?
+    createdAt               DateTime                    @default(now())
+    departamentsAsLeader    Departament[]
+    departamentsAsMember    MembersOnDepartaments[]
+    eventsAsOrganizer       OrganizersOnEvents[]
+    eventsAsDeacon          DeaconsOnEvents[]
+    eventsAsCooperator      CooperatorsOnEvents[]
+    eventsAsPastor          PastorsOnEvents[]
+    eventsAsLevite          LevitesOnEvents[]
+    eventsAsPreacher        Event[]                     @relation("PreacherEvent")
+    eventsAsInitiation      Event[]                     @relation("InitiationEvent")
+    eventsAsOffertory       Event[]                     @relation("OffertoryEvent")
+}
+
+model Church {
+    id                      Int                         @id @default(autoincrement())
+    description             String
+    picture                 String?
+    address_street          String
+    address_number          String
+    address_neighborhood    String
+    address_city            String
+    address_state           String
+    address_zipcode         String
+    createdAt               DateTime                    @default(now())
+    members                 PersonsOnChurchs[]
+    departaments            Departament[]
+    events                  Event[]
+}
+
+model PersonsOnChurchs {
+    person                  Person                      @relation(fields: [personId], references: [id])
+    personId                Int
+    church                  Church                      @relation(fields: [churchId], references: [id])
+    churchId                Int
+    assignedAt              DateTime                    @default(now())
+
+    @@id([personId, churchId])
+}
+
+model Auth {
+    phoneNumber             String                      @id @unique
+    code                    Int
+    createdAt               DateTime                    @default(now())
+}
+
+model Departament {
+    id                      Int                         @id @default(autoincrement())
+    name                    String
+    leader                  Person                      @relation(fields: [leaderId], references: [id])
+    leaderId                Int
+    description             String?
+    members                 MembersOnDepartaments[]
+    church                  Church                      @relation(fields: [churchId], references: [id])
+    churchId                Int
+    createdAt               DateTime                    @default(now())
+    events                  Event[]                     @relation("DepartamentEvent")
+}
+
+model MembersOnDepartaments {
+    member                  Person                      @relation(fields: [memberId], references: [id])
+    memberId                Int
+    departament             Departament                 @relation(fields: [departamentId], references: [id])
+    departamentId           Int
+    assignedAt              DateTime                    @default(now())
+
+    @@id([memberId, departamentId])
+}
+
+
+model Event {
+    id                      Int             @id @default(autoincrement())
+    name                    String
+    description             String
+    startTime               DateTime
+    finishTime              DateTime
+    observations            String?
+    isWorship               Boolean         @default(false)
+    organizers              OrganizersOnEvents[]
+    deacons                 DeaconsOnEvents[]
+    cooperators             CooperatorsOnEvents[]
+    pastors                 PastorsOnEvents[]
+    levites                 LevitesOnEvents[]
+    preacher                Person?         @relation("PreacherEvent", fields: [preacherId], references: [id])
+    preacherId              Int?
+    initiation              Person?         @relation("InitiationEvent", fields: [initiationId], references: [id])
+    initiationId            Int?
+    offertory               Person?         @relation("OffertoryEvent", fields: [offertoryId], references: [id])
+    offertoryId             Int?
+    departament             Departament?    @relation("DepartamentEvent", fields: [departamentId], references: [id])
+    departamentId           Int?
+    church                  Church          @relation(fields: [churchId], references: [id])
+    churchId                Int
+    createdAt               DateTime        @default(now())
+}
+
+model OrganizersOnEvents {
+    organizer               Person          @relation(fields: [organizerId], references: [id])
+    organizerId             Int
+    event                   Event           @relation(fields: [eventId], references: [id])
+    eventId                 Int
+    assignedAt              DateTime        @default(now())
+
+    @@id([organizerId, eventId])
+}
+
+model DeaconsOnEvents {
+    deacon                  Person          @relation(fields: [deaconId], references: [id])
+    deaconId                Int
+    event                   Event           @relation(fields: [eventId], references: [id])
+    eventId                 Int
+    assignedAt              DateTime        @default(now())
+
+    @@id([deaconId, eventId])
+}
+
+model CooperatorsOnEvents {
+    cooperator              Person          @relation(fields: [cooperatorId], references: [id])
+    cooperatorId            Int
+    event                   Event           @relation(fields: [eventId], references: [id])
+    eventId                 Int
+    assignedAt              DateTime        @default(now())
+
+    @@id([cooperatorId, eventId])
+}
+
+model PastorsOnEvents {
+    pastor                  Person          @relation(fields: [pastorId], references: [id])
+    pastorId                Int
+    event                   Event           @relation(fields: [eventId], references: [id])
+    eventId                 Int
+    assignedAt              DateTime        @default(now())
+
+    @@id([pastorId, eventId])
+}
+
+model LevitesOnEvents {
+    levite                  Person          @relation(fields: [leviteId], references: [id])
+    leviteId                Int
+    event                   Event           @relation(fields: [eventId], references: [id])
+    eventId                 Int
+    assignedAt              DateTime        @default(now())
+
+    @@id([leviteId, eventId])
+}

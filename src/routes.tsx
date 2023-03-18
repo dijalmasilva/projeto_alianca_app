@@ -8,7 +8,7 @@ import ConfirmationScreen from '@/screens/confirmation';
 import useTheme from 'theme/useTheme';
 import ProfileScreen from '@/screens/authenticated/profile';
 import {useAppSelector} from '@/hooks/store-hook';
-import {accessTokenSelector} from 'store/features/person/person';
+import PersonSelectors from 'store/features/person/selectors';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,7 +29,7 @@ const contentDefaultStyles = {
 
 const MyStackRouter = () => {
   const theme = useTheme();
-  const token = useAppSelector(accessTokenSelector);
+  const token = useAppSelector(PersonSelectors.accessToken);
 
   return (
     <NavigationContainer theme={theme}>
