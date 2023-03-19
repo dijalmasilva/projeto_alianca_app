@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import PersonSelectors from 'store/features/person/selectors';
 import Avatar from '@/components/avatar/Avatar';
@@ -21,11 +21,9 @@ const HeaderRight = () => {
   };
 
   return (
-    <View>
-      <TouchableOpacity onPress={onPress}>
-        <Avatar name={profile.name} size={30} />
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity onPress={onPress} style={{marginRight: 8}}>
+      <Avatar name={profile.name} size={30} />
+    </TouchableOpacity>
   );
 };
 

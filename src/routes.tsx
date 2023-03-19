@@ -66,6 +66,10 @@ const MyStackRouter = () => {
           options={{
             title: 'Página inicial',
             headerRight: HeaderRight,
+            headerShown: false,
+            contentStyle: {
+              padding: 0,
+            },
           }}
         />
         <Stack.Screen
