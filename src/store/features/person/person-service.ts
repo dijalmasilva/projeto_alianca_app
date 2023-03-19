@@ -73,9 +73,20 @@ const updateProfile = createAsyncThunk(
   },
 );
 
+const logout = createAsyncThunk(
+  'auth/logout',
+  async (token: string, {rejectWithValue}) => {
+    return await httpClient(token)
+      .get('/auth/logout')
+      .then()
+      .catch(rejectWithValue);
+  },
+);
+
 const PersonService = {
   requestCode,
   login,
+  logout,
   getProfile,
   updateProfile,
 };

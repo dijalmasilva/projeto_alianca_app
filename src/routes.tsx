@@ -9,6 +9,7 @@ import useTheme from 'theme/useTheme';
 import ProfileScreen from '@/screens/authenticated/profile';
 import {useAppSelector} from '@/hooks/store-hook';
 import PersonSelectors from 'store/features/person/selectors';
+import HeaderRight from '@/components/header-right/HeaderRight';
 
 const Stack = createNativeStackNavigator();
 
@@ -62,7 +63,10 @@ const MyStackRouter = () => {
         <Stack.Screen
           name={PrivateRoutes.home}
           component={HomeScreen}
-          options={{title: 'Página inicial'}}
+          options={{
+            title: 'Página inicial',
+            headerRight: HeaderRight,
+          }}
         />
         <Stack.Screen
           name={PrivateRoutes.profile}
