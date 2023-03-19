@@ -1,11 +1,14 @@
 import React from 'react';
-import CalendarScreen from '@/screens/authenticated/calendar';
+import AgendaScreen from '@/screens/authenticated/agenda';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ProfileScreen from '@/screens/authenticated/profile';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import {Platform} from 'react-native';
+import {ROLE} from 'constants/roles.constants';
+import useRoleHook from '@/hooks/useRoleHook';
+import ChurchScreen from '@/screens/authenticated/church';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,6 +31,8 @@ const IconProfile = ({size, color}: IconTabType) => {
 };
 
 const HomeScreen = () => {
+  const {canRender} = useRoleHook();
+
   return (
     <Tab.Navigator
       initialRouteName="Calendar"
@@ -41,7 +46,7 @@ const HomeScreen = () => {
       }}>
       <Tab.Screen
         name="Calendar"
-        component={CalendarScreen}
+        component={AgendaScreen}
         options={{
           title: 'Eventos',
           tabBarIcon: IconCalendar,
@@ -49,14 +54,16 @@ const HomeScreen = () => {
       />
       <Tab.Screen
         name="Departaments"
-        component={CalendarScreen}
+        component={AgendaScreen}
         options={{title: 'Departamentos', tabBarIcon: IconDepartament}}
       />
-      <Tab.Screen
-        name="Churchs"
-        component={CalendarScreen}
-        options={{title: 'Igrejas', tabBarIcon: IconChurch}}
-      />
+      {canRender([ROLE.ADMIN, ROLE.PASTOR]) && (
+        <Tab.Screen
+          name="Churchs"
+          component={ChurchScreen}
+          options={{title: 'Igrejas', tabBarIcon: IconChurch}}
+        />
+      )}
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}

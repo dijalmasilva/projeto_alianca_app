@@ -1,11 +1,15 @@
 import {configureStore} from '@reduxjs/toolkit';
-import personReducer from 'store/features/person/person';
-import churchReducer from 'store/features/church/church';
+import personReducer from './features/person/person';
+import churchReducer from './features/church/church';
+import eventReducer from './features/event/event';
+import departamentReducer from './features/departament/departament';
 
 export const store = configureStore({
   reducer: {
     person: personReducer,
     church: churchReducer,
+    event: eventReducer,
+    departament: departamentReducer,
   },
 });
 

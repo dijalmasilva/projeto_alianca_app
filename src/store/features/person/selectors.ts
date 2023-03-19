@@ -10,11 +10,14 @@ export const profile = (state: RootState): PersonProfile => state.person.me;
 
 export const auth = (state: RootState) => state.person.auth;
 
+export const roles = (state: RootState) => state.person.me.roles;
+
 const PersonSelectors = {
   loading,
   accessToken,
   profile,
   auth,
+  roles,
 };
 
 export default PersonSelectors;

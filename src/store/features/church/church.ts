@@ -15,7 +15,11 @@ const initialState: ChurchState = {
 const churchSlice = createSlice({
   name: 'church',
   initialState,
-  reducers: {},
+  reducers: {
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+  },
   extraReducers: builder => {
     builder.addCase(ChurchService.getChurchs.pending, state => {
       state.loading = true;
