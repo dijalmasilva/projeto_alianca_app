@@ -71,7 +71,6 @@ const personSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(PersonService.getProfile.fulfilled, (state, action) => {
-      console.log(JSON.stringify(action.payload, null, 2));
       state.loading = false;
       state.me = action.payload;
     });

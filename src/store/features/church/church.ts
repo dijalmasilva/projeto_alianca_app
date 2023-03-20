@@ -19,6 +19,15 @@ const churchSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
+    addChurchOrUpdate: (state, action: PayloadAction<Church>) => {
+      const newChurchOrUpdate = action.payload;
+
+      const churchs = state.churchs;
+      const churchsResult = churchs.filter(c => c.id !== newChurchOrUpdate.id);
+
+      churchsResult.push(newChurchOrUpdate);
+      state.churchs = churchsResult;
+    },
   },
   extraReducers: builder => {
     builder.addCase(ChurchService.getChurchs.pending, state => {
@@ -38,5 +47,6 @@ const churchSlice = createSlice({
 });
 
 const churchReducer = churchSlice.reducer;
+export const ChurchActions = churchSlice.actions;
 
 export default churchReducer;

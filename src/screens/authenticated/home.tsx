@@ -8,7 +8,7 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import {Platform} from 'react-native';
 import {ROLE} from 'constants/roles.constants';
 import useRoleHook from '@/hooks/useRoleHook';
-import ChurchScreen from '@/screens/authenticated/church';
+import ChurchRootScreen from '@/screens/authenticated/church/root';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,12 +30,19 @@ const IconProfile = ({size, color}: IconTabType) => {
   return <IonIcon name="person" size={size} color={color} />;
 };
 
+export enum TabRoutes {
+  calendar = 'calendar',
+  departaments = 'departaments',
+  churchs = 'churchs',
+  profile = 'profile',
+}
+
 const HomeScreen = () => {
   const {canRender} = useRoleHook();
 
   return (
     <Tab.Navigator
-      initialRouteName="Calendar"
+      initialRouteName={TabRoutes.calendar}
       screenOptions={{
         tabBarLabelStyle: {
           paddingBottom: Platform.OS === 'ios' ? 0 : 5,
@@ -45,7 +52,7 @@ const HomeScreen = () => {
         },
       }}>
       <Tab.Screen
-        name="Calendar"
+        name={TabRoutes.calendar}
         component={AgendaScreen}
         options={{
           title: 'Eventos',
@@ -53,19 +60,23 @@ const HomeScreen = () => {
         }}
       />
       <Tab.Screen
-        name="Departaments"
+        name={TabRoutes.departaments}
         component={AgendaScreen}
         options={{title: 'Departamentos', tabBarIcon: IconDepartament}}
       />
       {canRender([ROLE.ADMIN, ROLE.PASTOR]) && (
         <Tab.Screen
-          name="Churchs"
-          component={ChurchScreen}
-          options={{title: 'Igrejas', tabBarIcon: IconChurch}}
+          name={TabRoutes.churchs}
+          component={ChurchRootScreen}
+          options={{
+            tabBarIcon: IconChurch,
+            headerShown: false,
+            title: 'Igrejas',
+          }}
         />
       )}
       <Tab.Screen
-        name="Profile"
+        name={TabRoutes.profile}
         component={ProfileScreen}
         options={{title: 'Perfil', tabBarIcon: IconProfile}}
       />

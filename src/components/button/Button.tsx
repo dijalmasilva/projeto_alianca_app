@@ -6,12 +6,13 @@ import {
   TouchableOpacityProps,
 } from 'react-native';
 
-const Button = ({children, ...props}: TouchableOpacityProps) => {
+const Button = ({children, style, ...props}: TouchableOpacityProps) => {
   const theme = useTheme();
 
   return (
     <TouchableOpacity
       style={[
+        style,
         {backgroundColor: theme.colors.primary, shadowColor: theme.colors.text},
         styles.mainButton,
       ]}

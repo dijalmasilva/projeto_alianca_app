@@ -45,7 +45,6 @@ const ProfileScreen = ({navigation}: Props) => {
   }, []);
 
   useEffect(() => {
-    console.log(JSON.stringify(profile, null, 2));
     setProfileState(profile);
   }, [profile]);
 

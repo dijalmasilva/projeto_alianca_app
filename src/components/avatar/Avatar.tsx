@@ -79,7 +79,9 @@ const Avatar = ({
       return;
     }
 
-    Alert.alert('Você quer colocar uma foto, né?');
+    Alert.alert(
+      'Você quer colocar uma foto, né? Tenha calma que está em desenvolvimento',
+    );
   };
 
   return (
