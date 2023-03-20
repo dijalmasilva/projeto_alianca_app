@@ -12,7 +12,6 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import MyStackRouter from 'routes';
 import {Provider} from 'react-redux';
 import {store} from 'store';
-import 'react-native-gesture-handler';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
