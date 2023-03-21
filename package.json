@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@prisma/client": "4.11.0",
+    "@react-native-community/async-storage": "^1.12.1",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.5",
     "@react-navigation/native-stack": "^6.9.11",

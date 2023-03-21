@@ -1,14 +1,5 @@
 import React, {useEffect} from 'react';
-import {
-  FlatList,
-  ListRenderItemInfo,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
 import {Church} from '@prisma/client';
-import Avatar from '@/components/avatar/Avatar';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import ChurchSelectors from 'store/features/church/selectors';
 import useTheme from 'theme/useTheme';
@@ -18,6 +9,9 @@ import FlatButton from '@/components/button/FlatButton';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {NavigationProp} from '@react-navigation/native';
 import {ChurchRoutes} from '@/screens/authenticated/church/root';
+import ChurchList from '@/components/churchs/church-list';
+import {StyleSheet, View} from 'react-native';
+import Loading from '@/components/loading/loading';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -27,6 +21,7 @@ const ChurchScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch();
   const churchs = useAppSelector(ChurchSelectors.getChurchs);
   const token = useAppSelector(PersonSelectors.accessToken);
+  const loading = useAppSelector(ChurchSelectors.loading);
 
   useEffect(() => {
     if (churchs.length === 0) {
@@ -42,88 +37,21 @@ const ChurchScreen = ({navigation}: Props) => {
     navigation.navigate(ChurchRoutes.details);
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <View style={styles.container}>
       <FlatButton onPress={createChurch}>
         <Icon name="plus" size={25} color={theme.colors.text} />
       </FlatButton>
-      <FlatList
-        data={churchs}
-        keyExtractor={item => `${item.id}`}
-        renderItem={({item, index}: ListRenderItemInfo<Church>) => {
-          return (
-            <View key={`select-${item.id}`}>
-              <TouchableOpacity
-                style={[
-                  {
-                    backgroundColor:
-                      index % 2 ? theme.colors.card : theme.colors.border,
-                  },
-                  styles.itemList,
-                ]}
-                onPress={() => onSelectItem(item)}>
-                <View style={styles.viewItems}>
-                  <Avatar name={item.description} size={50} />
-                  <View style={styles.infoChurch}>
-                    <Text style={styles.textDescription}>
-                      {item.description}
-                    </Text>
-                    <Text style={styles.textAddress}>
-                      <Text style={styles.textAddressLabel}>Endereço: </Text>
-                      {[
-                        item.address_street,
-                        item.address_number,
-                        item.address_neighborhood,
-                        item.address_city,
-                        item.address_state,
-                        item.address_zipcode,
-                      ]
-                        .filter(i => i)
-                        .join(', ')}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </View>
-          );
-        }}
-      />
+      <ChurchList churchs={churchs} onSelectChurch={onSelectItem} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  select: {
-    width: '100%',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  itemList: {
-    paddingHorizontal: 16,
-    height: 100,
-    justifyContent: 'center',
-  },
-  infoChurch: {
-    gap: 4,
-  },
-  textDescription: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  textAddressLabel: {
-    fontWeight: 'bold',
-  },
-  viewItems: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 16,
-  },
-  textAddress: {
-    flexWrap: 'wrap',
-    paddingRight: 32,
-  },
   container: {
     flex: 1,
   },

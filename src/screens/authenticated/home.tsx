@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import AgendaScreen from '@/screens/authenticated/agenda';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ProfileScreen from '@/screens/authenticated/profile';
@@ -9,6 +9,10 @@ import {Platform} from 'react-native';
 import {ROLE} from 'constants/roles.constants';
 import useRoleHook from '@/hooks/useRoleHook';
 import ChurchRootScreen from '@/screens/authenticated/church/root';
+import DepartamentRootScreen from '@/screens/authenticated/departament/root';
+import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
+import PersonSelectors from 'store/features/person/selectors';
+import PersonService from 'store/features/person/person-service';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,6 +43,15 @@ export enum TabRoutes {
 
 const HomeScreen = () => {
   const {canRender} = useRoleHook();
+  const dispatch = useAppDispatch();
+  const token = useAppSelector(PersonSelectors.accessToken);
+  const profile = useAppSelector(PersonSelectors.profile);
+
+  useEffect(() => {
+    if (!profile.id) {
+      dispatch(PersonService.getProfile(token));
+    }
+  }, [profile]);
 
   return (
     <Tab.Navigator
@@ -59,11 +72,24 @@ const HomeScreen = () => {
           tabBarIcon: IconCalendar,
         }}
       />
-      <Tab.Screen
-        name={TabRoutes.departaments}
-        component={AgendaScreen}
-        options={{title: 'Departamentos', tabBarIcon: IconDepartament}}
-      />
+      {canRender([
+        ROLE.ADMIN,
+        ROLE.PASTOR,
+        ROLE.LEVITE,
+        ROLE.DEACON,
+        ROLE.LEADER,
+        ROLE.COOPERATOR,
+      ]) && (
+        <Tab.Screen
+          name={TabRoutes.departaments}
+          component={DepartamentRootScreen}
+          options={{
+            title: 'Departamentos',
+            tabBarIcon: IconDepartament,
+            headerShown: false,
+          }}
+        />
+      )}
       {canRender([ROLE.ADMIN, ROLE.PASTOR]) && (
         <Tab.Screen
           name={TabRoutes.churchs}

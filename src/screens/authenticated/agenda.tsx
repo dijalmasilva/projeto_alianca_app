@@ -1,12 +1,48 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {Agenda} from 'react-native-calendars';
 import useTheme from 'theme/useTheme';
-import {format} from 'date-fns/esm';
 import {DATE_FORMATS} from '@/components/calendar/calendar.config';
+import ViewContainer from '@/components/container/ViewContainer';
+import {addDays, format, isSameDay, subDays} from 'date-fns';
+
+const testItems = {
+  [format(new Date(), DATE_FORMATS.calendar)]: [
+    {
+      name: 'Pré encontro com Deus',
+      height: 10,
+      day: '',
+    },
+    {
+      name: 'Força Jovem',
+      height: 10,
+      day: '',
+    },
+  ],
+  [format(addDays(new Date(), 1), DATE_FORMATS.calendar)]: [
+    {
+      name: 'Culto ao Espírito Santo',
+      height: 10,
+      day: '',
+    },
+    {
+      name: 'Cantina dos jovens',
+      height: 10,
+      day: '',
+    },
+    {
+      name: 'Alguma coisa',
+      height: 10,
+      day: '',
+    },
+  ],
+};
 
 const AgendaScreen = () => {
+  const today = new Date();
   const theme = useTheme();
+
+  console.log(testItems);
 
   return (
     <Agenda
@@ -24,24 +60,47 @@ const AgendaScreen = () => {
         todayTextColor: theme.colors.primary,
         selectedDotColor: theme.colors.primary,
       }}
-      selected={format(new Date(), DATE_FORMATS.calendar)}
-      renderItem={item => (
-        <TouchableOpacity style={styles.item}>
-          <Text style={styles.itemText}>{item.name}</Text>
-        </TouchableOpacity>
-      )}
-      renderList={props => {
-        const {selectedDay} = props;
-
+      items={testItems}
+      initialNumToRender={5}
+      minDate={format(subDays(today, 15), DATE_FORMATS.calendar)}
+      maxDate={format(addDays(today, 40), DATE_FORMATS.calendar)}
+      selected={format(today, DATE_FORMATS.calendar)}
+      renderItem={item => {
         return (
           <View
-            style={[
-              styles.viewList,
-              {backgroundColor: theme.colors.background},
-            ]}>
-            <Text>List</Text>
-            {!props.items && props.renderEmptyData && props.renderEmptyData()}
+            key={item.name}
+            style={[styles.item, {backgroundColor: theme.colors.primary}]}>
+            <Text>{item.name}</Text>
           </View>
+        );
+      }}
+      renderList={props => {
+        const {selectedDay} = props;
+        console.log(selectedDay);
+        const items = props.items;
+        let events;
+        if (items) {
+          const keys = Object.keys(items);
+          const eventsToDay = keys.find(key =>
+            isSameDay(new Date(key), new Date(selectedDay)),
+          );
+
+          if (eventsToDay) {
+            events = items[eventsToDay as string];
+          }
+        }
+
+        return (
+          <ViewContainer>
+            <>
+              {!events && props.renderEmptyData && props.renderEmptyData()}
+              {events &&
+                events.map(
+                  (event, index) =>
+                    props.renderItem && props.renderItem(event, index === 0),
+                )}
+            </>
+          </ViewContainer>
         );
       }}
       renderEmptyData={() => (
@@ -63,11 +122,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   item: {
-    flex: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginRight: 10,
-    marginTop: 17,
+    minHeight: 40,
+    padding: 16,
+    marginVertical: 4,
   },
   itemText: {
     color: '#888',
@@ -78,9 +135,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  viewList: {
-    flex: 1,
   },
 });
 

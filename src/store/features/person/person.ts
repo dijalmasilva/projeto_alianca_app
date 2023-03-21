@@ -1,8 +1,12 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import PersonService from 'store/features/person/person-service';
-import {Person} from '@prisma/client';
+import {Departament, Person} from '@prisma/client';
+import {_storeToken} from 'utils/storage';
 
-export type PersonProfile = Omit<Person, 'createdAt'>;
+export type PersonProfile = Omit<Person, 'createdAt'> & {
+  departamentsAsLeader: Departament[];
+  departamentsAsMember: Departament[];
+};
 
 type PersonSliceState = {
   loading: boolean;
@@ -31,6 +35,8 @@ const initialState: PersonSliceState = {
     address_number: '',
     address_street: '',
     address_zipcode: '',
+    departamentsAsLeader: [],
+    departamentsAsMember: [],
   },
   auth: {
     accessToken: '',
@@ -50,7 +56,11 @@ const personSlice = createSlice({
       state.me.phoneNumber = action.payload;
     },
     updateAccessToken: (state, action: PayloadAction<string>) => {
-      state.auth.accessToken = action.payload;
+      const token = action.payload;
+      (async () => {
+        await _storeToken(token);
+      })();
+      state.auth.accessToken = token;
     },
   },
   extraReducers: builder => {
@@ -72,9 +82,23 @@ const personSlice = createSlice({
     });
     builder.addCase(PersonService.getProfile.fulfilled, (state, action) => {
       state.loading = false;
-      state.me = action.payload;
+      state.me = {...state.me, ...action.payload};
     });
     builder.addCase(PersonService.getProfile.rejected, state => {
+      state.loading = false;
+    });
+    builder.addCase(
+      PersonService.getDepartaments.fulfilled,
+      (state, action) => {
+        state.loading = false;
+        state.me.departamentsAsLeader = action.payload.departamentsAsLeader;
+        state.me.departamentsAsMember = action.payload.departamentsAsMember;
+      },
+    );
+    builder.addCase(PersonService.getDepartaments.pending, state => {
+      state.loading = true;
+    });
+    builder.addCase(PersonService.getDepartaments.rejected, state => {
       state.loading = false;
     });
   },
