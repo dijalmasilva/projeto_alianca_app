@@ -13,6 +13,7 @@ import DepartamentRootScreen from '@/screens/authenticated/departament/root';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import PersonSelectors from 'store/features/person/selectors';
 import PersonService from 'store/features/person/person-service';
+import BibleScreen from '@/screens/authenticated/bible';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,11 +35,16 @@ const IconProfile = ({size, color}: IconTabType) => {
   return <IonIcon name="person" size={size} color={color} />;
 };
 
+const IconBible = ({size, color}: IconTabType) => {
+  return <FontAwesome5Icon name="bible" size={size} color={color} />;
+};
+
 export enum TabRoutes {
   calendar = 'calendar',
   departaments = 'departaments',
   churchs = 'churchs',
   profile = 'profile',
+  bible = 'bible',
 }
 
 const HomeScreen = () => {
@@ -105,6 +111,11 @@ const HomeScreen = () => {
         name={TabRoutes.profile}
         component={ProfileScreen}
         options={{title: 'Perfil', tabBarIcon: IconProfile}}
+      />
+      <Tab.Screen
+        name={TabRoutes.bible}
+        component={BibleScreen}
+        options={{title: 'Bíblia', tabBarIcon: IconBible}}
       />
     </Tab.Navigator>
   );

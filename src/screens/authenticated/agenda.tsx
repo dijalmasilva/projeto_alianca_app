@@ -6,43 +6,41 @@ import {DATE_FORMATS} from '@/components/calendar/calendar.config';
 import ViewContainer from '@/components/container/ViewContainer';
 import {addDays, format, isSameDay, subDays} from 'date-fns';
 
-const testItems = {
-  [format(new Date(), DATE_FORMATS.calendar)]: [
-    {
-      name: 'Pré encontro com Deus',
-      height: 10,
-      day: '',
-    },
-    {
-      name: 'Força Jovem',
-      height: 10,
-      day: '',
-    },
-  ],
-  [format(addDays(new Date(), 1), DATE_FORMATS.calendar)]: [
-    {
-      name: 'Culto ao Espírito Santo',
-      height: 10,
-      day: '',
-    },
-    {
-      name: 'Cantina dos jovens',
-      height: 10,
-      day: '',
-    },
-    {
-      name: 'Alguma coisa',
-      height: 10,
-      day: '',
-    },
-  ],
-};
-
 const AgendaScreen = () => {
   const today = new Date();
   const theme = useTheme();
 
-  console.log(testItems);
+  const testItems = {
+    [format(today, DATE_FORMATS.calendar)]: [
+      {
+        name: 'Pré encontro com Deus',
+        height: 10,
+        day: '',
+      },
+      {
+        name: 'Força Jovem',
+        height: 10,
+        day: '',
+      },
+    ],
+    [format(addDays(today, 1), DATE_FORMATS.calendar)]: [
+      {
+        name: 'Culto ao Espírito Santo',
+        height: 10,
+        day: '',
+      },
+      {
+        name: 'Cantina dos jovens',
+        height: 10,
+        day: '',
+      },
+      {
+        name: 'Alguma coisa',
+        height: 10,
+        day: '',
+      },
+    ],
+  };
 
   return (
     <Agenda
@@ -76,17 +74,19 @@ const AgendaScreen = () => {
       }}
       renderList={props => {
         const {selectedDay} = props;
-        console.log(selectedDay);
+        const selected = new Date(selectedDay);
         const items = props.items;
         let events;
         if (items) {
           const keys = Object.keys(items);
-          const eventsToDay = keys.find(key =>
-            isSameDay(new Date(key), new Date(selectedDay)),
-          );
+          const keyFound = keys.find(key => {
+            //for some reason new Date(key) subtracts one day, for this reason I increment one day
+            const dateKey = addDays(new Date(key), 1);
+            return isSameDay(dateKey, selected);
+          });
 
-          if (eventsToDay) {
-            events = items[eventsToDay as string];
+          if (keyFound) {
+            events = items[keyFound as string];
           }
         }
 
