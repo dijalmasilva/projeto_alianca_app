@@ -1,16 +1,18 @@
 import useTheme from 'theme/useTheme';
-import {StyleSheet, View} from 'react-native';
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import React, {ReactNode} from 'react';
 
 type Props = {
   children: ReactNode;
+  style?: StyleProp<ViewStyle>;
 };
-const ViewContainer = ({children}: Props) => {
+const ViewContainer = ({children, style}: Props) => {
   const theme = useTheme();
 
   return (
     <View
       style={[
+        style,
         styles.viewContainer,
         {backgroundColor: theme.colors.background},
       ]}>

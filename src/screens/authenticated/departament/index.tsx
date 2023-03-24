@@ -9,8 +9,14 @@ import RoleView from '@/components/role-view/RoleView';
 import {ROLE} from 'constants/roles.constants';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loading from '@/components/loading/loading';
+import {NavigationProp} from '@react-navigation/native';
+import {DepartamentRoutes} from '@/screens/authenticated/departament/root';
 
-const DepartamentsScreen = () => {
+type Props = {
+  navigation: NavigationProp<any>;
+};
+
+const DepartamentsScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch();
   const personLoading = useAppSelector(PersonSelectors.loading);
   const token = useAppSelector(PersonSelectors.accessToken);
@@ -21,7 +27,9 @@ const DepartamentsScreen = () => {
     dispatch(PersonService.getDepartaments({personId: profile.id, token}));
   }, []);
 
-  const createDepartament = () => {};
+  const createDepartament = () => {
+    navigation.navigate(DepartamentRoutes.details);
+  };
 
   if (personLoading) {
     return <Loading />;

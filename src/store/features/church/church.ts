@@ -1,6 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import ChurchService from 'store/features/church/church-service';
 import {Church} from '@prisma/client';
+import PersonService from 'store/features/person/person-service';
 
 type ChurchState = {
   loading: boolean;
@@ -43,6 +44,7 @@ const churchSlice = createSlice({
         state.churchs = action.payload;
       },
     );
+    builder.addCase(PersonService.logout.fulfilled, () => initialState);
   },
 });
 

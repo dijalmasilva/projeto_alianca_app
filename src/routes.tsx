@@ -9,7 +9,6 @@ import useTheme from 'theme/useTheme';
 import ProfileScreen from '@/screens/authenticated/profile';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import PersonSelectors from 'store/features/person/selectors';
-import HeaderRight from '@/components/header-right/HeaderRight';
 import {_retrieveToken} from 'utils/storage';
 import {PersonActions} from 'store/features/person/person';
 import {StyleSheet, View} from 'react-native';
@@ -107,7 +106,6 @@ const MyStackRouter = () => {
           component={HomeScreen}
           options={{
             title: 'Página inicial',
-            headerRight: HeaderRight,
             headerShown: false,
             contentStyle: {
               padding: 0,

@@ -101,6 +101,7 @@ const personSlice = createSlice({
     builder.addCase(PersonService.getDepartaments.rejected, state => {
       state.loading = false;
     });
+    builder.addCase(PersonService.logout.fulfilled, () => initialState);
   },
 });
 

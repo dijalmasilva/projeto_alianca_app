@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {Event} from '@prisma/client';
+import PersonService from 'store/features/person/person-service';
 
 type EventState = {
   loading: boolean;
@@ -25,7 +26,9 @@ const eventSlice = createSlice({
       state.loading = action.payload;
     },
   },
-  extraReducers: () => {},
+  extraReducers: builder => {
+    builder.addCase(PersonService.logout.fulfilled, () => initialState);
+  },
 });
 
 export const EventActions = eventSlice.actions;

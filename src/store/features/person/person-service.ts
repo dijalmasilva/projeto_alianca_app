@@ -98,6 +98,19 @@ const getDepartaments = createAsyncThunk(
   },
 );
 
+const getPersonByNameOrNumber = createAsyncThunk(
+  'person/getByNameOrNumber',
+  async (
+    {token, filter}: {token: string; filter: string},
+    {rejectWithValue},
+  ) => {
+    return await httpClient(token)
+      .get('/person/filter', {params: {text: filter}})
+      .then(res => res.data)
+      .catch(rejectWithValue);
+  },
+);
+
 const PersonService = {
   requestCode,
   login,
@@ -105,6 +118,7 @@ const PersonService = {
   getProfile,
   updateProfile,
   getDepartaments,
+  getPersonByNameOrNumber,
 };
 
 export default PersonService;
