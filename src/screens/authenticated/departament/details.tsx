@@ -6,7 +6,6 @@ import {Departament, Prisma} from '@prisma/client';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import DepartamentService from 'store/features/departament/departament-service';
 import PersonSelectors from 'store/features/person/selectors';
-import {DepartamentRoutes} from '@/screens/authenticated/departament/root';
 import Input from '@/components/input/Input';
 import UserInput from '@/components/input/UserInput';
 import Button from '@/components/button/Button';
@@ -20,6 +19,8 @@ type Props = {
   route: RouteProp<any>;
 };
 const DepartamentDetailScreen = ({route, navigation}: Props) => {
+  console.log('route');
+  console.log(route);
   const dispatch = useAppDispatch();
   const token = useAppSelector(PersonSelectors.accessToken);
   const departament = route.params
@@ -31,6 +32,7 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
   const [departamentState, setDepartamentState] = useState<
     Departament | Prisma.DepartamentCreateInput | undefined
   >(undefined);
+  const [members, setMembers] = useState<number[]>([]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -64,27 +66,8 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
     );
   };
 
-  const onChangeMembers = (members: number[]) => {
-    const membersResult = members.map(memberId => ({
-      create: {
-        memberId: memberId,
-      },
-      where: {
-        memberId_departamentId: {
-          memberId: memberId,
-        },
-      },
-    }));
-
-    setDepartamentState(
-      prevState =>
-        ({
-          ...prevState,
-          members: {
-            connectOrCreate: membersResult,
-          },
-        } as Prisma.DepartamentCreateInput),
-    );
+  const onChangeMembers = (newMembers: number[]) => {
+    setMembers(newMembers);
   };
 
   const onSubmit = async () => {
@@ -104,15 +87,60 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
       );
 
       if (DepartamentService.createDepartament.fulfilled.match(resultCreate)) {
-        navigation.goBack();
+        const departmentCreated = resultCreate.payload as Departament;
+        const departmentUpdate = {
+          ...departmentCreated,
+          members: {
+            connectOrCreate: members.map(member => ({
+              create: {
+                memberId: member,
+              },
+              where: {
+                memberId_departamentId: {
+                  departamentId: departmentCreated.id,
+                  memberId: member,
+                },
+              },
+            })),
+          },
+        } as Prisma.DepartamentUpdateInput;
+        const updateWithMembers = await dispatch(
+          DepartamentService.updateDepartament({
+            token,
+            departamentId: departmentCreated.id,
+            departament: departmentUpdate,
+          }),
+        );
+        if (
+          DepartamentService.updateDepartament.fulfilled.match(
+            updateWithMembers,
+          )
+        ) {
+          navigation.goBack();
+        } else {
+          Alert.alert(
+            'Houve um erro ao inserir os membros desse departamento.',
+          );
+        }
       } else {
-        console.log('erro');
-        console.log(resultCreate.payload);
         Alert.alert('Houve um erro ao cadastrar o departamento');
       }
     } else {
       const departamentUpdate = {
         ...departamentState,
+        members: {
+          connectOrCreate: members.map(member => ({
+            create: {
+              memberId: member,
+            },
+            where: {
+              memberId_departamentId: {
+                departamentId: (departament as Departament).id,
+                memberId: member,
+              },
+            },
+          })),
+        },
       } as Prisma.DepartamentUpdateInput;
 
       const resultUpdate = await dispatch(
@@ -133,12 +161,21 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
 
   return (
     <ScrollView>
-      <ViewContainer>
-        <Input label="Nome do departamento" onChangeText={onChangeName} />
-        <Input label="Descrição" onChangeText={onChangeDescription} />
+      <ViewContainer style={{gap: 8}}>
+        <Input
+          label="Nome do departamento"
+          onChangeText={onChangeName}
+          defaultValue={departamentState?.name}
+        />
+        <Input
+          label="Descrição"
+          onChangeText={onChangeDescription}
+          defaultValue={departamentState?.description || ''}
+        />
         <UserInput
           onSingleSelect={onChangeLeader}
           label="Líder do departamento"
+          defaultSingleValue={(departamentState as Departament)?.leaderId}
         />
         <UserInput
           multipleSelection

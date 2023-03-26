@@ -1,71 +1,59 @@
-import {
-  FlatList,
-  ListRenderItemInfo,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Church} from '@prisma/client';
-import Avatar from '@/components/avatar/Avatar';
-import React, {memo} from 'react';
+import React from 'react';
 import useTheme from 'theme/useTheme';
-import {Theme} from '@react-navigation/native';
+import Avatar from '@/components/avatar/Avatar';
 
-type Props = {
+type ChurchListProps = {
   churchs: Church[];
   onSelectChurch: (church: Church) => void;
 };
 
-type RenderItemProps<T> = {
-  theme: Theme;
-  onSelect: (item: T) => void;
-  item: ListRenderItemInfo<T>;
-};
-
-const RenderItem = (props: RenderItemProps<Church>) => {
-  const {
-    item: {item, index},
-    theme,
-    onSelect,
-  } = props;
+const ChurchList = ({churchs, onSelectChurch}: ChurchListProps) => {
+  const theme = useTheme();
 
   return (
-    <View key={`select-${item.id}`}>
-      <TouchableOpacity
-        style={[
-          {
-            backgroundColor:
-              index % 2 ? theme.colors.card : theme.colors.border,
-          },
-          styles.itemList,
-        ]}
-        onPress={() => onSelect(item)}>
-        <View style={styles.viewItems}>
-          <Avatar name={item.description} size={50} />
-          <View style={styles.infoChurch}>
-            <Text style={styles.textDescription}>{item.description}</Text>
-            <Text style={styles.textAddress}>
-              <Text style={styles.textAddressLabel}>Endereço: </Text>
-              {[
-                item.address_street,
-                item.address_number,
-                item.address_neighborhood,
-                item.address_city,
-                item.address_state,
-                item.address_zipcode,
-              ]
-                .filter(i => i)
-                .join(', ')}
-            </Text>
+    <View>
+      {churchs.map((church, index) => {
+        return (
+          <View key={`select-${church.id}`}>
+            <TouchableOpacity
+              style={[
+                {
+                  backgroundColor:
+                    index % 2 ? theme.colors.card : theme.colors.border,
+                },
+                styles.itemList,
+              ]}
+              onPress={() => onSelectChurch(church)}>
+              <View style={styles.viewItems}>
+                <Avatar name={church.description} size={50} />
+                <View style={styles.infoChurch}>
+                  <Text style={styles.textDescription}>
+                    {church.description}
+                  </Text>
+                  <Text style={styles.textAddress}>
+                    <Text style={styles.textAddressLabel}>Endereço: </Text>
+                    {[
+                      church.address_street,
+                      church.address_number,
+                      church.address_neighborhood,
+                      church.address_city,
+                      church.address_state,
+                      church.address_zipcode,
+                    ]
+                      .filter(i => i)
+                      .join(', ')}
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
           </View>
-        </View>
-      </TouchableOpacity>
+        );
+      })}
     </View>
   );
 };
-
-const ChurchRenderItem = memo(RenderItem);
 
 const styles = StyleSheet.create({
   select: {
@@ -101,22 +89,5 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 });
-
-const _renderItem =
-  (theme: Theme, onSelect: (church: Church) => void) =>
-  (props: ListRenderItemInfo<Church>) =>
-    <ChurchRenderItem theme={theme} onSelect={onSelect} item={props} />;
-
-const ChurchList = ({churchs, onSelectChurch}: Props) => {
-  const theme = useTheme();
-
-  return (
-    <FlatList
-      data={churchs}
-      keyExtractor={item => `${item.id}`}
-      renderItem={_renderItem(theme, onSelectChurch)}
-    />
-  );
-};
 
 export default ChurchList;

@@ -15,6 +15,7 @@ import PersonService from 'store/features/person/person-service';
 import PhoneInputWrapper from '@/components/input/PhoneInput';
 import {PublicRoutes} from 'routes';
 import {PersonActions} from 'store/features/person/person';
+import {phoneNumberRegex} from 'utils/regexs';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -25,7 +26,7 @@ const LoginScreen = ({navigation}: Props) => {
   const [number, setNumber] = useState<string>('');
 
   const validateNumber = (phoneNumber: string) => {
-    if (phoneNumber.length !== 14) {
+    if (phoneNumber.length !== 14 && !phoneNumberRegex.test(phoneNumber)) {
       Alert.alert(
         'Telefone incorreto. Verifique se você digitou o DDD, e o "9" antes do número',
       );
@@ -57,7 +58,10 @@ const LoginScreen = ({navigation}: Props) => {
           />
           <Text style={styles.textLogo}>Projeto Aliança</Text>
         </View>
-        <PhoneInputWrapper onChangeText={setNumber} />
+        <PhoneInputWrapper
+          onChangeText={setNumber}
+          textInputProps={{onBlur: requestCode}}
+        />
         <Button onPress={requestCode}>
           <Text style={styles.loginBtText}>Entrar</Text>
         </Button>

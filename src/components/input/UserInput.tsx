@@ -22,6 +22,8 @@ type Props = {
   multipleSelection?: boolean;
   onSingleSelect?: SingleSelect;
   onMultiSelect?: MultiSelect;
+  defaultSingleValue?: number;
+  defaultMultiValue?: number[];
   label: string;
 };
 
@@ -80,6 +82,8 @@ const UserInput = ({
   onSingleSelect,
   onMultiSelect,
   label,
+  defaultSingleValue,
+  defaultMultiValue,
 }: Props) => {
   const dispatch = useAppDispatch();
   const token = useAppSelector(PersonSelectors.accessToken);
@@ -100,6 +104,24 @@ const UserInput = ({
       onMultiSelect(persons.map(p => p.id));
     }
   }, [multipleSelection, persons]);
+
+  useEffect(() => {
+    if (!multipleSelection && defaultMultiValue) {
+      setPersons([]);
+      //TODO dispatch to get minimal person
+    }
+  }, [multipleSelection, defaultSingleValue]);
+
+  useEffect(() => {
+    if (
+      multipleSelection &&
+      defaultMultiValue &&
+      defaultMultiValue.length > 0
+    ) {
+      setPerson(undefined);
+      //TODO dispatch to get minimal persons
+    }
+  }, [multipleSelection, defaultMultiValue]);
 
   useEffect(() => {
     (async () => {

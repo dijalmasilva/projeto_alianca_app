@@ -1,19 +1,20 @@
 import React from 'react';
-import PhoneInput from 'react-native-phone-number-input';
+import PhoneInput, {PhoneInputProps} from 'react-native-phone-number-input';
 import {StyleSheet, View} from 'react-native';
 import useTheme from 'theme/useTheme';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 type Props = {
   onChangeText?: (text: string) => void;
-};
+} & PhoneInputProps;
 
-const PhoneInputWrapper = ({onChangeText}: Props) => {
+const PhoneInputWrapper = ({onChangeText, ...props}: Props) => {
   const theme = useTheme();
 
   return (
     <View style={{marginVertical: 8}}>
       <PhoneInput
+        {...props}
         onChangeFormattedText={onChangeText}
         renderDropdownImage={
           <Icon name="caret-down" color={theme.colors.text} />

@@ -91,8 +91,9 @@ const personSlice = createSlice({
       PersonService.getDepartaments.fulfilled,
       (state, action) => {
         state.loading = false;
-        state.me.departamentsAsLeader = action.payload.departamentsAsLeader;
-        state.me.departamentsAsMember = action.payload.departamentsAsMember;
+        const {departamentsAsLeader, departamentsAsMember} = action.payload;
+        state.me.departamentsAsLeader = departamentsAsLeader;
+        state.me.departamentsAsMember = departamentsAsMember;
       },
     );
     builder.addCase(PersonService.getDepartaments.pending, state => {
