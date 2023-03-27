@@ -9,7 +9,7 @@ import {Platform} from 'react-native';
 import {ROLE} from 'constants/roles.constants';
 import useRoleHook from '@/hooks/useRoleHook';
 import ChurchRootScreen from '@/screens/authenticated/church/root';
-import DepartamentRootScreen from '@/screens/authenticated/departament/root';
+import DepartmentRootScreen from '@/screens/authenticated/department/root';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import PersonSelectors from 'store/features/person/selectors';
 import PersonService from 'store/features/person/person-service';
@@ -23,7 +23,7 @@ const IconCalendar = ({size, color}: IconTabType) => {
   return <AntDesignIcon name="calendar" size={size} color={color} />;
 };
 
-const IconDepartament = ({size, color}: IconTabType) => {
+const IconDepartment = ({size, color}: IconTabType) => {
   return <FontAwesome5Icon name="house-user" size={size} color={color} />;
 };
 
@@ -41,7 +41,7 @@ const IconBible = ({size, color}: IconTabType) => {
 
 export enum TabRoutes {
   calendar = 'calendar',
-  departaments = 'departaments',
+  departments = 'departments',
   churchs = 'churchs',
   profile = 'profile',
   bible = 'bible',
@@ -87,11 +87,11 @@ const HomeScreen = () => {
         ROLE.COOPERATOR,
       ]) && (
         <Tab.Screen
-          name={TabRoutes.departaments}
-          component={DepartamentRootScreen}
+          name={TabRoutes.departments}
+          component={DepartmentRootScreen}
           options={{
             title: 'Departamentos',
-            tabBarIcon: IconDepartament,
+            tabBarIcon: IconDepartment,
             headerShown: false,
           }}
         />

@@ -38,8 +38,8 @@ model Person {
     address_state           String?
     address_zipcode         String?
     createdAt               DateTime                    @default(now())
-    departamentsAsLeader    Departament[]
-    departamentsAsMember    MembersOnDepartaments[]
+    departmentsAsLeader     Department[]
+    departmentsAsMember     MembersOnDepartments[]
     eventsAsOrganizer       OrganizersOnEvents[]
     eventsAsDeacon          DeaconsOnEvents[]
     eventsAsCooperator      CooperatorsOnEvents[]
@@ -62,7 +62,7 @@ model Church {
     address_zipcode         String
     createdAt               DateTime                    @default(now())
     members                 PersonsOnChurchs[]
-    departaments            Departament[]
+    departments             Department[]
     events                  Event[]
 }
 
@@ -82,27 +82,27 @@ model Auth {
     createdAt               DateTime                    @default(now())
 }
 
-model Departament {
+model Department {
     id                      Int                         @id @default(autoincrement())
     name                    String
     leader                  Person                      @relation(fields: [leaderId], references: [id])
     leaderId                Int
     description             String?
-    members                 MembersOnDepartaments[]
+    members                 MembersOnDepartments[]
     church                  Church                      @relation(fields: [churchId], references: [id])
     churchId                Int
     createdAt               DateTime                    @default(now())
-    events                  Event[]                     @relation("DepartamentEvent")
+    events                  Event[]                     @relation("DepartmentEvent")
 }
 
-model MembersOnDepartaments {
+model MembersOnDepartments {
     member                  Person                      @relation(fields: [memberId], references: [id])
     memberId                Int
-    departament             Departament                 @relation(fields: [departamentId], references: [id])
-    departamentId           Int
+    department              Department                  @relation(fields: [departmentId], references: [id])
+    departmentId            Int
     assignedAt              DateTime                    @default(now())
 
-    @@id([memberId, departamentId])
+    @@id([memberId, departmentId])
 }
 
 
@@ -125,8 +125,8 @@ model Event {
     initiationId            Int?
     offertory               Person?         @relation("OffertoryEvent", fields: [offertoryId], references: [id])
     offertoryId             Int?
-    departament             Departament?    @relation("DepartamentEvent", fields: [departamentId], references: [id])
-    departamentId           Int?
+    department              Department?     @relation("DepartmentEvent", fields: [departmentId], references: [id])
+    departmentId           Int?
     church                  Church          @relation(fields: [churchId], references: [id])
     churchId                Int
     createdAt               DateTime        @default(now())

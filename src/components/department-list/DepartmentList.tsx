@@ -1,5 +1,5 @@
 import React from 'react';
-import {Departament} from '@prisma/client';
+import {Department} from '@prisma/client';
 import {
   StyleProp,
   StyleSheet,
@@ -13,13 +13,13 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import useTheme from 'theme/useTheme';
 
 type Props = {
-  // Define Props type for DepartamentSummary
-  department: Departament;
+  // Define Props type for DepartmentSummary
+  department: Department;
   style?: StyleProp<ViewStyle>;
   onPress?: () => void;
 };
 
-const DepartamentSummary: React.FC<Props> = ({department, style, onPress}) => {
+const DepartmentSummary: React.FC<Props> = ({department, style, onPress}) => {
   return (
     <TouchableOpacity
       style={[stylesSummary.container, style]}
@@ -62,14 +62,14 @@ const stylesSummary = StyleSheet.create({
 });
 
 interface ListProps {
-  // Define Props type for DepartamentList
-  departaments: Departament[];
-  onSelect?: (departament: Departament) => void;
+  // Define Props type for DepartmentList
+  departments: Department[];
+  onSelect?: (department: Department) => void;
 }
 
-const DepartamentList: React.FC<ListProps> = ({departaments, onSelect}) => {
+const DepartmentList: React.FC<ListProps> = ({departments, onSelect}) => {
   const theme = useTheme();
-  const isEmpty = departaments.length === 0;
+  const isEmpty = departments.length === 0;
 
   if (isEmpty) {
     return (
@@ -82,8 +82,8 @@ const DepartamentList: React.FC<ListProps> = ({departaments, onSelect}) => {
 
   return (
     <View style={styles.listContainer}>
-      {departaments.map((department, index) => (
-        <DepartamentSummary
+      {departments.map((department, index) => (
+        <DepartmentSummary
           key={department.id}
           department={department}
           onPress={() => onSelect && onSelect(department)}
@@ -108,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DepartamentList;
+export default DepartmentList;

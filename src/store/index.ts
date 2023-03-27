@@ -2,14 +2,14 @@ import {configureStore} from '@reduxjs/toolkit';
 import personReducer from './features/person/person';
 import churchReducer from './features/church/church';
 import eventReducer from './features/event/event';
-import departamentReducer from './features/departament/departament';
+import departmentReducer from './features/department/department';
 
 export const store = configureStore({
   reducer: {
     person: personReducer,
     church: churchReducer,
     event: eventReducer,
-    departament: departamentReducer,
+    department: departmentReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({serializableCheck: false}),

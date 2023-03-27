@@ -104,7 +104,7 @@ const ProfileScreen = ({navigation}: Props) => {
 
   const onSubmit = async () => {
     if (validateForm() && church) {
-      const {departamentsAsLeader, departamentsAsMember, ...profileResult} =
+      const {departmentsAsLeader, departmentsAsMember, ...profileResult} =
         profileState;
       const result = await dispatch(
         PersonService.updateProfile({
@@ -133,8 +133,8 @@ const ProfileScreen = ({navigation}: Props) => {
         dispatch(
           PersonActions.updateMe({
             ...result.payload,
-            departamentsAsMember,
-            departamentsAsLeader,
+            departmentsAsMember,
+            departmentsAsLeader,
           }),
         );
         navigation.dispatch(

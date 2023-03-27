@@ -83,16 +83,16 @@ const logout = createAsyncThunk(
   },
 );
 
-type GetDepartamentsType = {
+type GetDepartmentsType = {
   personId: number;
   token: string;
 };
 
-const getDepartaments = createAsyncThunk(
-  'person/getDepartaments',
-  async ({token, personId}: GetDepartamentsType, {rejectWithValue}) => {
+const getDepartments = createAsyncThunk(
+  'person/getDepartments',
+  async ({token, personId}: GetDepartmentsType, {rejectWithValue}) => {
     return await httpClient(token)
-      .get(`/person/${personId}/departaments`)
+      .get(`/person/${personId}/departments`)
       .then(res => res.data)
       .catch(rejectWithValue);
   },
@@ -117,7 +117,7 @@ const PersonService = {
   logout,
   getProfile,
   updateProfile,
-  getDepartaments,
+  getDepartments,
   getPersonByNameOrNumber,
 };
 

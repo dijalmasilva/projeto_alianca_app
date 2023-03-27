@@ -10,33 +10,33 @@ import {ROLE} from 'constants/roles.constants';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loading from '@/components/loading/loading';
 import {NavigationProp} from '@react-navigation/native';
-import {DepartamentRoutes} from '@/screens/authenticated/departament/root';
-import DepartamentList from '@/components/departament-list/DepartamentList';
-import {Departament} from '@prisma/client';
+import {DepartmentRoutes} from '@/screens/authenticated/department/root';
+import DepartmentList from '@/components/department-list/DepartmentList';
+import {Department} from '@prisma/client';
 import useRoleHook from '@/hooks/useRoleHook';
-import DepartamentService from 'store/features/departament/departament-service';
-import DepartamentSelectors from 'store/features/departament/selectors';
+import DepartmentService from 'store/features/department/department-service';
+import DepartmentSelectors from 'store/features/department/selectors';
 
 type Props = {
   navigation: NavigationProp<any>;
 };
 
-const DepartamentsScreen = ({navigation}: Props) => {
+const DepartmentsScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch();
   const personLoading = useAppSelector(PersonSelectors.loading);
   const token = useAppSelector(PersonSelectors.accessToken);
   const profile = useAppSelector(PersonSelectors.profile);
-  const departamentsOnImNotIncluded = useAppSelector(
-    DepartamentSelectors.getDepartamentsOnUserLoggedWasNotIncluded,
+  const departmentsOnImNotIncluded = useAppSelector(
+    DepartmentSelectors.getDepartmentsOnUserLoggedWasNotIncluded,
   );
-  const {departamentsAsLeader, departamentsAsMember} = profile;
+  const {departmentsAsLeader, departmentsAsMember} = profile;
   const roleHook = useRoleHook();
 
   useEffect(() => {
-    dispatch(PersonService.getDepartaments({personId: profile.id, token}));
+    dispatch(PersonService.getDepartments({personId: profile.id, token}));
     if (roleHook.canRender([ROLE.ADMIN])) {
       dispatch(
-        DepartamentService.getDepartamentsImNotIncluded({
+        DepartmentService.getDepartmentsImNotIncluded({
           token,
           personId: profile.id,
         }),
@@ -44,12 +44,12 @@ const DepartamentsScreen = ({navigation}: Props) => {
     }
   }, []);
 
-  const createDepartament = () => {
-    navigation.navigate(DepartamentRoutes.details);
+  const createDepartment = () => {
+    navigation.navigate(DepartmentRoutes.details);
   };
 
-  const seeDetails = (department: Departament) => {
-    navigation.navigate(DepartamentRoutes.details, {departament: department});
+  const seeDetails = (department: Department) => {
+    navigation.navigate(DepartmentRoutes.details, {department: department});
   };
 
   if (personLoading) {
@@ -59,27 +59,21 @@ const DepartamentsScreen = ({navigation}: Props) => {
   return (
     <ViewContainer style={styles.mainContainer}>
       <RoleView accepteds={[ROLE.ADMIN]}>
-        <FlatButton onPress={createDepartament}>
+        <FlatButton onPress={createDepartment}>
           <Icon name="plus" size={25} />
         </FlatButton>
       </RoleView>
       <Text>Departamentos como líder</Text>
-      <DepartamentList
-        departaments={departamentsAsLeader}
-        onSelect={seeDetails}
-      />
+      <DepartmentList departments={departmentsAsLeader} onSelect={seeDetails} />
       <Text>Departamentos como membro</Text>
-      <DepartamentList
-        departaments={departamentsAsMember}
-        onSelect={seeDetails}
-      />
+      <DepartmentList departments={departmentsAsMember} onSelect={seeDetails} />
       <RoleView accepteds={[ROLE.ADMIN]}>
         <Text>Outros departamentos</Text>
         <Text style={styles.span}>
           Visualização apenas para administradores
         </Text>
-        <DepartamentList
-          departaments={departamentsOnImNotIncluded}
+        <DepartmentList
+          departments={departmentsOnImNotIncluded}
           onSelect={seeDetails}
         />
       </RoleView>
@@ -96,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DepartamentsScreen;
+export default DepartmentsScreen;

@@ -2,58 +2,58 @@ import React, {useEffect, useState} from 'react';
 import {Alert, ScrollView, Text} from 'react-native';
 import ViewContainer from '@/components/container/ViewContainer';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
-import {Departament, Prisma} from '@prisma/client';
+import {Department, Prisma} from '@prisma/client';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
-import DepartamentService from 'store/features/departament/departament-service';
+import DepartmentService from 'store/features/department/department-service';
 import PersonSelectors from 'store/features/person/selectors';
 import Input from '@/components/input/Input';
 import UserInput from '@/components/input/UserInput';
 import Button from '@/components/button/Button';
 
 type RouteParams = {
-  departament: Departament;
+  department: Department;
 };
 
 type Props = {
   navigation: NavigationProp<any>;
   route: RouteProp<any>;
 };
-const DepartamentDetailScreen = ({route, navigation}: Props) => {
+const DepartmentDetailScreen = ({route, navigation}: Props) => {
   console.log('route');
   console.log(route);
   const dispatch = useAppDispatch();
   const token = useAppSelector(PersonSelectors.accessToken);
-  const departament = route.params
-    ? (route.params as RouteParams).departament
+  const department = route.params
+    ? (route.params as RouteParams).department
     : undefined;
 
-  const isNewDepartament = !departament;
+  const isNewDepartment = !department;
 
-  const [departamentState, setDepartamentState] = useState<
-    Departament | Prisma.DepartamentCreateInput | undefined
+  const [departmentState, setDepartmentState] = useState<
+    Department | Prisma.DepartmentCreateInput | undefined
   >(undefined);
   const [members, setMembers] = useState<number[]>([]);
 
   useEffect(() => {
     navigation.setOptions({
-      title: departament ? departament.name : 'Novo departamento',
+      title: department ? department.name : 'Novo departamento',
     });
-    setDepartamentState(departament);
-  }, [departament]);
+    setDepartmentState(department);
+  }, [department]);
 
-  const onChangeDepartament = (key: string, text: string) => {
-    setDepartamentState(
+  const onChangeDepartment = (key: string, text: string) => {
+    setDepartmentState(
       prevState =>
-        ({...prevState, [key]: text} as Prisma.DepartamentCreateInput),
+        ({...prevState, [key]: text} as Prisma.DepartmentCreateInput),
     );
   };
 
-  const onChangeName = (text: string) => onChangeDepartament('name', text);
+  const onChangeName = (text: string) => onChangeDepartment('name', text);
   const onChangeDescription = (text: string) =>
-    onChangeDepartament('description', text);
+    onChangeDepartment('description', text);
 
   const onChangeLeader = (leaderId: number) => {
-    setDepartamentState(
+    setDepartmentState(
       prevState =>
         ({
           ...prevState,
@@ -62,7 +62,7 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
               id: leaderId,
             },
           },
-        } as Prisma.DepartamentCreateInput),
+        } as Prisma.DepartmentCreateInput),
     );
   };
 
@@ -71,12 +71,12 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
   };
 
   const onSubmit = async () => {
-    if (isNewDepartament) {
+    if (isNewDepartment) {
       const resultCreate = await dispatch(
-        DepartamentService.createDepartament({
+        DepartmentService.createDepartment({
           token,
-          departament: {
-            ...(departamentState as Prisma.DepartamentCreateInput),
+          department: {
+            ...(departmentState as Prisma.DepartmentCreateInput),
             church: {
               connect: {
                 id: 1,
@@ -86,8 +86,8 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
         }),
       );
 
-      if (DepartamentService.createDepartament.fulfilled.match(resultCreate)) {
-        const departmentCreated = resultCreate.payload as Departament;
+      if (DepartmentService.createDepartment.fulfilled.match(resultCreate)) {
+        const departmentCreated = resultCreate.payload as Department;
         const departmentUpdate = {
           ...departmentCreated,
           members: {
@@ -96,23 +96,23 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
                 memberId: member,
               },
               where: {
-                memberId_departamentId: {
-                  departamentId: departmentCreated.id,
+                memberId_departmentId: {
+                  departmentId: departmentCreated.id,
                   memberId: member,
                 },
               },
             })),
           },
-        } as Prisma.DepartamentUpdateInput;
+        } as Prisma.DepartmentUpdateInput;
         const updateWithMembers = await dispatch(
-          DepartamentService.updateDepartament({
+          DepartmentService.updateDepartment({
             token,
-            departamentId: departmentCreated.id,
-            departament: departmentUpdate,
+            departmentId: departmentCreated.id,
+            department: departmentUpdate,
           }),
         );
         if (
-          DepartamentService.updateDepartament.fulfilled.match(
+          DepartmentService.updateDepartment.fulfilled.match(
             updateWithMembers,
           )
         ) {
@@ -126,32 +126,32 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
         Alert.alert('Houve um erro ao cadastrar o departamento');
       }
     } else {
-      const departamentUpdate = {
-        ...departamentState,
+      const departmentUpdate = {
+        ...departmentState,
         members: {
           connectOrCreate: members.map(member => ({
             create: {
               memberId: member,
             },
             where: {
-              memberId_departamentId: {
-                departamentId: (departament as Departament).id,
+              memberId_departmentId: {
+                departmentId: (department as Department).id,
                 memberId: member,
               },
             },
           })),
         },
-      } as Prisma.DepartamentUpdateInput;
+      } as Prisma.DepartmentUpdateInput;
 
       const resultUpdate = await dispatch(
-        DepartamentService.updateDepartament({
+        DepartmentService.updateDepartment({
           token,
-          departamentId: (departament as Departament).id,
-          departament: departamentUpdate,
+          departmentId: (department as Department).id,
+          department: departmentUpdate,
         }),
       );
 
-      if (DepartamentService.updateDepartament.fulfilled.match(resultUpdate)) {
+      if (DepartmentService.updateDepartment.fulfilled.match(resultUpdate)) {
         navigation.goBack();
       } else {
         Alert.alert('Ocorreu um erro ao tentar atualizar esse departamento.');
@@ -165,17 +165,17 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
         <Input
           label="Nome do departamento"
           onChangeText={onChangeName}
-          defaultValue={departamentState?.name}
+          defaultValue={departmentState?.name}
         />
         <Input
           label="Descrição"
           onChangeText={onChangeDescription}
-          defaultValue={departamentState?.description || ''}
+          defaultValue={departmentState?.description || ''}
         />
         <UserInput
           onSingleSelect={onChangeLeader}
           label="Líder do departamento"
-          defaultSingleValue={(departamentState as Departament)?.leaderId}
+          defaultSingleValue={(departmentState as Department)?.leaderId}
         />
         <UserInput
           multipleSelection
@@ -190,4 +190,4 @@ const DepartamentDetailScreen = ({route, navigation}: Props) => {
   );
 };
 
-export default DepartamentDetailScreen;
+export default DepartmentDetailScreen;

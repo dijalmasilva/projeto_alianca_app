@@ -1,11 +1,11 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import PersonService from 'store/features/person/person-service';
-import {Departament, Person} from '@prisma/client';
+import {Department, Person} from '@prisma/client';
 import {_storeToken} from 'utils/storage';
 
 export type PersonProfile = Omit<Person, 'createdAt'> & {
-  departamentsAsLeader: Departament[];
-  departamentsAsMember: Departament[];
+  departmentsAsLeader: Department[];
+  departmentsAsMember: Department[];
 };
 
 type PersonSliceState = {
@@ -35,8 +35,8 @@ const initialState: PersonSliceState = {
     address_number: '',
     address_street: '',
     address_zipcode: '',
-    departamentsAsLeader: [],
-    departamentsAsMember: [],
+    departmentsAsLeader: [],
+    departmentsAsMember: [],
   },
   auth: {
     accessToken: '',
@@ -87,19 +87,16 @@ const personSlice = createSlice({
     builder.addCase(PersonService.getProfile.rejected, state => {
       state.loading = false;
     });
-    builder.addCase(
-      PersonService.getDepartaments.fulfilled,
-      (state, action) => {
-        state.loading = false;
-        const {departamentsAsLeader, departamentsAsMember} = action.payload;
-        state.me.departamentsAsLeader = departamentsAsLeader;
-        state.me.departamentsAsMember = departamentsAsMember;
-      },
-    );
-    builder.addCase(PersonService.getDepartaments.pending, state => {
+    builder.addCase(PersonService.getDepartments.fulfilled, (state, action) => {
+      state.loading = false;
+      const {departmentsAsLeader, departmentsAsMember} = action.payload;
+      state.me.departmentsAsLeader = departmentsAsLeader;
+      state.me.departmentsAsMember = departmentsAsMember;
+    });
+    builder.addCase(PersonService.getDepartments.pending, state => {
       state.loading = true;
     });
-    builder.addCase(PersonService.getDepartaments.rejected, state => {
+    builder.addCase(PersonService.getDepartments.rejected, state => {
       state.loading = false;
     });
     builder.addCase(PersonService.logout.fulfilled, () => initialState);
