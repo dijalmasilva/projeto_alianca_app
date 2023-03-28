@@ -11,7 +11,8 @@ import {NavigationProp} from '@react-navigation/native';
 import {ChurchRoutes} from '@/screens/authenticated/church/root';
 import ChurchList from '@/components/churchs/church-list';
 import {StyleSheet, View} from 'react-native';
-import Loading from '@/components/loading/loading';
+import NotchLoading from '@/components/loading/notch-loading';
+import ViewContainer from '@/components/container/ViewContainer';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -38,7 +39,11 @@ const ChurchScreen = ({navigation}: Props) => {
   };
 
   if (loading) {
-    return <Loading />;
+    return (
+      <ViewContainer center>
+        <NotchLoading size={50} />
+      </ViewContainer>
+    );
   }
 
   return (

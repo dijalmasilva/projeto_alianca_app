@@ -8,7 +8,6 @@ import FlatButton from '@/components/button/FlatButton';
 import RoleView from '@/components/role-view/RoleView';
 import {ROLE} from 'constants/roles.constants';
 import Icon from 'react-native-vector-icons/AntDesign';
-import Loading from '@/components/loading/loading';
 import {NavigationProp} from '@react-navigation/native';
 import {DepartmentRoutes} from '@/screens/authenticated/department/root';
 import DepartmentList from '@/components/department-list/DepartmentList';
@@ -16,6 +15,7 @@ import {Department} from '@prisma/client';
 import useRoleHook from '@/hooks/useRoleHook';
 import DepartmentService from 'store/features/department/department-service';
 import DepartmentSelectors from 'store/features/department/selectors';
+import NotchLoading from '@/components/loading/notch-loading';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -53,7 +53,11 @@ const DepartmentsScreen = ({navigation}: Props) => {
   };
 
   if (personLoading) {
-    return <Loading />;
+    return (
+      <ViewContainer center>
+        <NotchLoading size={50} />
+      </ViewContainer>
+    );
   }
 
   return (

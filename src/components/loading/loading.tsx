@@ -1,4 +1,4 @@
-import {Animated, Easing, StyleSheet, Text, View} from 'react-native';
+import {Animated, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import useVerseDay from '@/hooks/useVerseDay';
 import useTheme from 'theme/useTheme';

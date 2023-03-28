@@ -23,6 +23,8 @@ import PersonService from 'store/features/person/person-service';
 import {PrivateRoutes} from 'routes';
 import {PersonActions} from 'store/features/person/person';
 import PersonSelectors from 'store/features/person/selectors';
+import NotchLoading from '@/components/loading/notch-loading';
+import ViewContainer from '@/components/container/ViewContainer';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -31,6 +33,7 @@ type Props = {
 const CELL_COUNT = 6;
 
 const ConfirmationScreen = ({navigation}: Props) => {
+  const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const me = useAppSelector(PersonSelectors.profile);
@@ -53,6 +56,7 @@ const ConfirmationScreen = ({navigation}: Props) => {
 
   const submitCode = async () => {
     if (codeConfirmation.length === CELL_COUNT) {
+      setLoading(true);
       const resultLogin = await dispatch(
         PersonService.login({
           username: me.phoneNumber,
@@ -75,6 +79,7 @@ const ConfirmationScreen = ({navigation}: Props) => {
             }),
           );
           navigation.navigate(PrivateRoutes.profileComplete);
+          setLoading(false);
         } else {
           navigation.dispatch(
             CommonActions.reset({
@@ -87,12 +92,22 @@ const ConfirmationScreen = ({navigation}: Props) => {
             }),
           );
           navigation.navigate(PrivateRoutes.home);
+          setLoading(false);
         }
       } else {
         Alert.alert(resultLogin.payload as string);
+        setLoading(false);
       }
     }
   };
+
+  if (loading) {
+    return (
+      <ViewContainer center>
+        <NotchLoading size={50} />
+      </ViewContainer>
+    );
+  }
 
   return (
     <SafeAreaView>

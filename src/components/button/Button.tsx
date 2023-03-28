@@ -4,16 +4,40 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
+  View,
 } from 'react-native';
+import Color from 'color';
+import NotchLoading from '@/components/loading/notch-loading';
 
-const Button = ({children, style, ...props}: TouchableOpacityProps) => {
-  const theme = useTheme();
+type Props = TouchableOpacityProps & {
+  loading?: boolean;
+};
+
+const Button = ({children, style, loading = false, ...props}: Props) => {
+  const {colors} = useTheme();
+  const backgroundColor = Color(colors.primary).darken(0.2).hex();
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          style,
+          {
+            backgroundColor: backgroundColor,
+            shadowColor: colors.text,
+          },
+          styles.mainButton,
+        ]}>
+        <NotchLoading />
+      </View>
+    );
+  }
 
   return (
     <TouchableOpacity
       style={[
         style,
-        {backgroundColor: theme.colors.primary, shadowColor: theme.colors.text},
+        {backgroundColor: colors.primary, shadowColor: colors.text},
         styles.mainButton,
       ]}
       {...props}>

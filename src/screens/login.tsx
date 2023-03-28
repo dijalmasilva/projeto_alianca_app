@@ -10,12 +10,13 @@ import {
 } from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import Button from '@/components/button/Button';
-import {useAppDispatch} from '@/hooks/store-hook';
+import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import PersonService from 'store/features/person/person-service';
 import PhoneInputWrapper from '@/components/input/PhoneInput';
 import {PublicRoutes} from 'routes';
 import {PersonActions} from 'store/features/person/person';
 import {phoneNumberRegex} from 'utils/regexs';
+import PersonSelectors from 'store/features/person/selectors';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -23,6 +24,7 @@ type Props = {
 
 const LoginScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch();
+  const loading = useAppSelector(PersonSelectors.loading);
   const [number, setNumber] = useState<string>('');
 
   const validateNumber = (phoneNumber: string) => {
@@ -62,7 +64,7 @@ const LoginScreen = ({navigation}: Props) => {
           onChangeText={setNumber}
           textInputProps={{onBlur: requestCode}}
         />
-        <Button onPress={requestCode}>
+        <Button onPress={requestCode} loading={loading}>
           <Text style={styles.loginBtText}>Entrar</Text>
         </Button>
       </ScrollView>

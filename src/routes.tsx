@@ -10,9 +10,9 @@ import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import PersonSelectors from 'store/features/person/selectors';
 import {_retrieveToken} from 'utils/storage';
 import {PersonActions} from 'store/features/person/person';
-import {StyleSheet, View} from 'react-native';
-import Loading from '@/components/loading/loading';
 import ProfileCompleteScreen from '@/screens/authenticated/profile/complete';
+import NotchLoading from '@/components/loading/notch-loading';
+import ViewContainer from '@/components/container/ViewContainer';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,24 +30,6 @@ export enum PrivateRoutes {
 const contentDefaultStyles = {
   padding: 16,
 };
-
-const styles = StyleSheet.create({
-  logoView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logo: {
-    width: 320,
-    height: 280,
-  },
-  textLogo: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: -16,
-    marginBottom: 16,
-  },
-});
 
 const MyStackRouter = () => {
   const theme = useTheme();
@@ -67,9 +49,9 @@ const MyStackRouter = () => {
 
   if (!loadedTokenOnStorage) {
     return (
-      <View style={styles.logoView}>
-        <Loading />
-      </View>
+      <ViewContainer center>
+        <NotchLoading size={50} />
+      </ViewContainer>
     );
   }
 

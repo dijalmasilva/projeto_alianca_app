@@ -5,8 +5,9 @@ import React, {ReactNode} from 'react';
 type Props = {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
+  center?: boolean;
 };
-const ViewContainer = ({children, style}: Props) => {
+const ViewContainer = ({children, style, center}: Props) => {
   const theme = useTheme();
 
   return (
@@ -15,6 +16,7 @@ const ViewContainer = ({children, style}: Props) => {
         style,
         styles.viewContainer,
         {backgroundColor: theme.colors.background},
+        center && {alignItems: 'center', justifyContent: 'center'},
       ]}>
       {children}
     </View>
