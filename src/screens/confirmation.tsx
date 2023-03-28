@@ -69,12 +69,12 @@ const ConfirmationScreen = ({navigation}: Props) => {
               index: 0,
               routes: [
                 {
-                  name: PrivateRoutes.profile,
+                  name: PrivateRoutes.profileComplete,
                 },
               ],
             }),
           );
-          navigation.navigate(PrivateRoutes.profile);
+          navigation.navigate(PrivateRoutes.profileComplete);
         } else {
           navigation.dispatch(
             CommonActions.reset({

@@ -2,17 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import LoginScreen from '@/screens/login';
-import HomeScreen from '@/screens/authenticated/home';
+import AuthenticatedRootScreen from '@/screens/authenticated/root';
 import AboutScreen from '@/screens/about';
 import ConfirmationScreen from '@/screens/confirmation';
 import useTheme from 'theme/useTheme';
-import ProfileScreen from '@/screens/authenticated/profile';
 import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import PersonSelectors from 'store/features/person/selectors';
 import {_retrieveToken} from 'utils/storage';
 import {PersonActions} from 'store/features/person/person';
 import {StyleSheet, View} from 'react-native';
 import Loading from '@/components/loading/loading';
+import ProfileCompleteScreen from '@/screens/authenticated/profile/complete';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +24,7 @@ export enum PublicRoutes {
 
 export enum PrivateRoutes {
   home = 'home',
-  profile = 'profile',
+  profileComplete = 'profileComplete',
 }
 
 const contentDefaultStyles = {
@@ -103,9 +103,8 @@ const MyStackRouter = () => {
         />
         <Stack.Screen
           name={PrivateRoutes.home}
-          component={HomeScreen}
+          component={AuthenticatedRootScreen}
           options={{
-            title: 'Página inicial',
             headerShown: false,
             contentStyle: {
               padding: 0,
@@ -113,10 +112,10 @@ const MyStackRouter = () => {
           }}
         />
         <Stack.Screen
-          name={PrivateRoutes.profile}
-          component={ProfileScreen}
+          name={PrivateRoutes.profileComplete}
+          component={ProfileCompleteScreen}
           options={{
-            title: 'Perfil',
+            title: 'Complete seu perfil',
             contentStyle: {
               ...contentDefaultStyles,
               alignItems: 'flex-start',

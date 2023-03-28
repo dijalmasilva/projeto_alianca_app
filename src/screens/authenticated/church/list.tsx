@@ -27,14 +27,14 @@ const ChurchScreen = ({navigation}: Props) => {
     if (churchs.length === 0) {
       dispatch(ChurchService.getChurchs(token));
     }
-  }, [churchs]);
+  }, []);
 
   const onSelectItem = (church: Church) => {
     navigation.navigate(ChurchRoutes.details, {church});
   };
 
   const createChurch = () => {
-    navigation.navigate(ChurchRoutes.details);
+    navigation.navigate(ChurchRoutes.create);
   };
 
   if (loading) {

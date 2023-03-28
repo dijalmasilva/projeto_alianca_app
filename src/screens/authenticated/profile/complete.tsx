@@ -14,7 +14,7 @@ import {CommonActions, NavigationProp} from '@react-navigation/native';
 import Avatar from '@/components/avatar/Avatar';
 import Input from '@/components/input/Input';
 import Button from '@/components/button/Button';
-import {PrivateRoutes, PublicRoutes} from 'routes';
+import {PrivateRoutes} from 'routes';
 import SwitchWrapper from '@/components/switch/SwitchWrapper';
 import CalendarBirthday from '@/components/calendar/CalendarBirthday';
 import {format} from 'date-fns/esm';
@@ -23,14 +23,14 @@ import SelectChurchModal from '@/components/select/select-church-modal';
 import {ROLE} from 'constants/roles.constants';
 import PersonSelectors from 'store/features/person/selectors';
 import {Church} from '@prisma/client';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {_storeToken} from 'utils/storage';
 
 type Props = {
   navigation: NavigationProp<any>;
 };
 
-const ProfileScreen = ({navigation}: Props) => {
+const THE_PHONE_NUMBER = '+5583998058971';
+
+const ProfileCompleteScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch();
   const profile = useAppSelector(PersonSelectors.profile);
   const token = useAppSelector(PersonSelectors.accessToken);
@@ -40,10 +40,7 @@ const ProfileScreen = ({navigation}: Props) => {
   const [profileState, setProfileState] = useState(profile);
 
   useEffect(() => {
-    if (!profile.name) {
-      navigation.setOptions({title: 'Complete seu perfil'});
-      dispatch(PersonService.getProfile(token));
-    }
+    dispatch(PersonService.getProfile(token));
   }, []);
 
   useEffect(() => {
@@ -59,6 +56,13 @@ const ProfileScreen = ({navigation}: Props) => {
     if (!profileState.birthday) {
       Alert.alert('Por favor, selecione sua data de nascimento.');
       return false;
+    }
+
+    if (profileState.phoneNumber !== THE_PHONE_NUMBER) {
+      if (!church) {
+        Alert.alert('Por favor, selecione a igreja que congrega.');
+        return false;
+      }
     }
 
     return true;
@@ -96,14 +100,8 @@ const ProfileScreen = ({navigation}: Props) => {
     setChurch(churchSelected);
   };
 
-  const logout = async () => {
-    await dispatch(PersonService.logout(token));
-    await _storeToken('');
-    navigation.navigate(PublicRoutes.login);
-  };
-
   const onSubmit = async () => {
-    if (validateForm() && church) {
+    if (validateForm()) {
       const {departmentsAsLeader, departmentsAsMember, ...profileResult} =
         profileState;
       const result = await dispatch(
@@ -112,20 +110,24 @@ const ProfileScreen = ({navigation}: Props) => {
           id: profileState.id,
           person: {
             ...profileResult,
-            churchs: {
-              connectOrCreate: {
-                create: {
-                  churchId: church.id,
-                  assignedAt: new Date().toISOString(),
-                },
-                where: {
-                  personId_churchId: {
-                    personId: profileState.id,
-                    churchId: church.id,
+            ...(profileState.phoneNumber !== THE_PHONE_NUMBER && church
+              ? {
+                  churchs: {
+                    connectOrCreate: {
+                      create: {
+                        churchId: church.id,
+                        assignedAt: new Date().toISOString(),
+                      },
+                      where: {
+                        personId_churchId: {
+                          personId: profileState.id,
+                          churchId: church.id,
+                        },
+                      },
+                    },
                   },
-                },
-              },
-            },
+                }
+              : {}),
           },
         }),
       );
@@ -168,19 +170,6 @@ const ProfileScreen = ({navigation}: Props) => {
         <View style={styles.profileView}>
           <View style={styles.viewAvatar}>
             <Avatar size={120} name={profileState.name} />
-            <Button
-              style={{
-                gap: 8,
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              onPress={logout}>
-              <Text style={{fontSize: 24, textTransform: 'uppercase'}}>
-                Sair
-              </Text>
-              <Icon name="sign-out" size={30} />
-            </Button>
           </View>
           <View style={styles.formView}>
             <Input
@@ -259,4 +248,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreen;
+export default ProfileCompleteScreen;

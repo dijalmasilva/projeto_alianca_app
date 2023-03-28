@@ -1,95 +1,78 @@
-import {Church} from '@prisma/client';
 import React from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
-import Button from '@/components/button/Button';
 import Avatar from '@/components/avatar/Avatar';
 import Input from '@/components/input/Input';
-import useUpdateChurch from '@/screens/authenticated/church/hooks/useUpdateChurch';
+import Button from '@/components/button/Button';
+import {NavigationProp} from '@react-navigation/native';
+import useCreateChurch from './hooks/useCreateChurch';
 
-type RouteParams = {
-  church: Church;
-};
-
-type Props = {
-  route: RouteProp<any>;
+type ChurchCreateScreenProps = {
   navigation: NavigationProp<any>;
 };
-const ChurchDetailScreen = ({route, navigation}: Props) => {
-  const church = route.params
-    ? (route.params as RouteParams).church
-    : ({
-        id: 0,
-        description: '',
-        address_city: '',
-        address_neighborhood: '',
-        address_number: '',
-        address_state: '',
-        address_street: '',
-        address_zipcode: '',
-      } as Church);
 
+const ChurchCreateScreen = ({navigation}: ChurchCreateScreenProps) => {
   const {
-    onChangeName,
-    onChangeNeighborhood,
-    onChangeNumber,
-    onChangeDescription,
-    onChangeZipcode,
-    onChangeStreet,
-    onChangeCity,
+    churchState,
     onChangeState,
+    onChangeNeighborhood,
+    onChangeDescription,
+    onChangeName,
+    onChangeStreet,
+    onChangeZipcode,
+    onChangeNumber,
+    onChangeCity,
     onSubmit,
-  } = useUpdateChurch(navigation, church);
+  } = useCreateChurch(navigation);
 
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
         <View style={styles.viewAvatar}>
-          <Avatar size={120} name={church.name} canEdit />
+          <Avatar size={120} name={churchState.name} canEdit />
         </View>
         <Input
           label="Nome"
-          defaultValue={church.name}
+          defaultValue={churchState.name}
           onChangeText={onChangeName}
         />
         <Input
           label="Descrição"
-          defaultValue={church.description || ''}
+          defaultValue={churchState.description || ''}
           onChangeText={onChangeDescription}
         />
         <Text style={styles.addressLabel}>Endereço</Text>
         <Input
           label="CEP"
-          defaultValue={church.address_zipcode}
+          defaultValue={churchState.address_zipcode}
           onChangeText={onChangeZipcode}
         />
         <Input
           label="Rua"
-          defaultValue={church.address_street}
+          defaultValue={churchState.address_street}
           onChangeText={onChangeStreet}
         />
         <Input
           label="Número"
-          defaultValue={church.address_number}
+          defaultValue={churchState.address_number}
           onChangeText={onChangeNumber}
         />
         <Input
           label="Bairro"
-          defaultValue={church.address_neighborhood}
+          defaultValue={churchState.address_neighborhood}
           onChangeText={onChangeNeighborhood}
         />
         <Input
           label="Cidade"
-          defaultValue={church.address_city}
+          defaultValue={churchState.address_city}
           onChangeText={onChangeCity}
         />
         <Input
           label="Estado"
-          defaultValue={church.address_state}
+          defaultValue={churchState.address_state}
           onChangeText={onChangeState}
         />
         <Button onPress={onSubmit}>
-          <Text style={styles.buttonText}>Atualizar</Text>
+          <Text style={styles.buttonText}>Cadastrar</Text>
         </Button>
       </View>
     </ScrollView>
@@ -121,4 +104,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChurchDetailScreen;
+export default ChurchCreateScreen;

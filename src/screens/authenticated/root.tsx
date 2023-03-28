@@ -39,15 +39,15 @@ const IconBible = ({size, color}: IconTabType) => {
   return <FontAwesome5Icon name="bible" size={size} color={color} />;
 };
 
-export enum TabRoutes {
-  calendar = 'calendar',
+export enum AuthenticatedRoutes {
+  agenda = 'agenda',
   departments = 'departments',
   churchs = 'churchs',
   profile = 'profile',
   bible = 'bible',
 }
 
-const HomeScreen = () => {
+const AuthenticatedRootScreen = () => {
   const {canRender} = useRoleHook();
   const dispatch = useAppDispatch();
   const token = useAppSelector(PersonSelectors.accessToken);
@@ -61,7 +61,7 @@ const HomeScreen = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName={TabRoutes.calendar}
+      initialRouteName={AuthenticatedRoutes.agenda}
       screenOptions={{
         tabBarLabelStyle: {
           paddingBottom: Platform.OS === 'ios' ? 0 : 5,
@@ -71,7 +71,7 @@ const HomeScreen = () => {
         },
       }}>
       <Tab.Screen
-        name={TabRoutes.calendar}
+        name={AuthenticatedRoutes.agenda}
         component={AgendaScreen}
         options={{
           title: 'Eventos',
@@ -87,7 +87,7 @@ const HomeScreen = () => {
         ROLE.COOPERATOR,
       ]) && (
         <Tab.Screen
-          name={TabRoutes.departments}
+          name={AuthenticatedRoutes.departments}
           component={DepartmentRootScreen}
           options={{
             title: 'Departamentos',
@@ -98,7 +98,7 @@ const HomeScreen = () => {
       )}
       {canRender([ROLE.ADMIN, ROLE.PASTOR]) && (
         <Tab.Screen
-          name={TabRoutes.churchs}
+          name={AuthenticatedRoutes.churchs}
           component={ChurchRootScreen}
           options={{
             tabBarIcon: IconChurch,
@@ -108,16 +108,16 @@ const HomeScreen = () => {
         />
       )}
       <Tab.Screen
-        name={TabRoutes.profile}
+        name={AuthenticatedRoutes.profile}
         component={ProfileScreen}
         options={{title: 'Perfil', tabBarIcon: IconProfile}}
       />
       <Tab.Screen
-        name={TabRoutes.bible}
+        name={AuthenticatedRoutes.bible}
         component={BibleScreen}
         options={{title: 'Bíblia', tabBarIcon: IconBible}}
       />
     </Tab.Navigator>
   );
 };
-export default HomeScreen;
+export default AuthenticatedRootScreen;

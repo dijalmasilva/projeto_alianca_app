@@ -102,9 +102,8 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   emptyContainer: {
-    flex: 1,
     alignItems: 'center',
-    marginVertical: 8,
+    marginVertical: 16,
   },
 });
 

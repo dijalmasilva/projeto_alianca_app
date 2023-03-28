@@ -4,11 +4,12 @@ import useTheme from 'theme/useTheme';
 
 type Props = {
   onChange?: (value: boolean) => void;
+  defaultValue?: boolean;
 };
 
-const SwitchWrapper = ({onChange}: Props) => {
+const SwitchWrapper = ({onChange, defaultValue = false}: Props) => {
   const theme = useTheme();
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(defaultValue);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   useEffect(() => {

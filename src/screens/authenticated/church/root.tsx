@@ -1,13 +1,15 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ChurchScreen from './index';
+import ChurchScreen from 'screens/authenticated/church/list';
 import ChurchDetailScreen from './details';
+import ChurchCreateScreen from './create';
 
 const ChurchStack = createNativeStackNavigator();
 
 export enum ChurchRoutes {
   churchs = 'churchsList',
   details = 'churchDetails',
+  create = 'churchCreate',
 }
 
 const ChurchRootScreen = () => {
@@ -21,6 +23,11 @@ const ChurchRootScreen = () => {
       <ChurchStack.Screen
         name={ChurchRoutes.details}
         component={ChurchDetailScreen}
+      />
+      <ChurchStack.Screen
+        name={ChurchRoutes.create}
+        component={ChurchCreateScreen}
+        options={{title: 'Nova Igreja'}}
       />
     </ChurchStack.Navigator>
   );

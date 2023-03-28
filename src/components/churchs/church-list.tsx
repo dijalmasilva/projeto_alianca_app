@@ -27,11 +27,14 @@ const ChurchList = ({churchs, onSelectChurch}: ChurchListProps) => {
               ]}
               onPress={() => onSelectChurch(church)}>
               <View style={styles.viewItems}>
-                <Avatar name={church.description} size={50} />
+                <Avatar name={church.name} size={50} />
                 <View style={styles.infoChurch}>
-                  <Text style={styles.textDescription}>
-                    {church.description}
-                  </Text>
+                  <Text style={styles.textName}>{church.name}</Text>
+                  {church.description && (
+                    <Text style={styles.textDescription}>
+                      {church.description}
+                    </Text>
+                  )}
                   <Text style={styles.textAddress}>
                     <Text style={styles.textAddressLabel}>Endereço: </Text>
                     {[
@@ -72,9 +75,12 @@ const styles = StyleSheet.create({
     gap: 4,
     flex: 1,
   },
-  textDescription: {
+  textName: {
     fontSize: 18,
     fontWeight: '600',
+  },
+  textDescription: {
+    fontSize: 14,
   },
   textAddressLabel: {
     fontWeight: 'bold',
@@ -86,6 +92,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   textAddress: {
+    fontSize: 12,
     flexWrap: 'wrap',
   },
 });

@@ -1,6 +1,6 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import httpClient from 'utils/http-client';
-import {Church, Prisma} from '@prisma/client';
+import {Prisma} from '@prisma/client';
 
 const getChurchs = createAsyncThunk(
   'church/findAll',
@@ -31,14 +31,15 @@ const createChurch = createAsyncThunk(
 
 type UpdateChurchType = {
   token: string;
-  church: Church;
+  church: Prisma.ChurchUpdateInput;
+  churchId: number;
 };
 
 const updateChurch = createAsyncThunk(
   'church/update',
   async (data: UpdateChurchType, {rejectWithValue}) => {
     return await httpClient(data.token)
-      .put(`/church/${data.church.id}`, data.church)
+      .put(`/church/${data.churchId}`, data.church)
       .then(res => res)
       .catch(rejectWithValue);
   },
