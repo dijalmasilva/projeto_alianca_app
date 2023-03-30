@@ -1,42 +1,34 @@
 import React, {useEffect} from 'react';
-import {Church} from '@prisma/client';
-import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
-import ChurchSelectors from 'store/features/church/selectors';
-import useTheme from 'theme/useTheme';
-import ChurchService from 'store/features/church/church-service';
-import PersonSelectors from 'store/features/person/selectors';
-import FlatButton from '@/components/button/FlatButton';
-import Icon from 'react-native-vector-icons/AntDesign';
 import {NavigationProp} from '@react-navigation/native';
-import {ChurchRoutes} from '@/screens/authenticated/church/root';
 import ChurchList from '@/components/churchs/church-list';
 import {StyleSheet, View} from 'react-native';
 import NotchLoading from '@/components/loading/notch-loading';
 import ViewContainer from '@/components/container/ViewContainer';
+import useChurchList from '@/screens/authenticated/church/hooks/useChurchList';
+import useRoleHook from '@/hooks/useRoleHook';
+import {ROLE} from 'constants/roles.constants';
+import HeaderButton from '@/components/button/HeaderButton';
 
 type Props = {
   navigation: NavigationProp<any>;
 };
+
+const _headerRight = (onPress: () => void) => () => {
+  return <HeaderButton onPress={onPress} />;
+};
+
 const ChurchScreen = ({navigation}: Props) => {
-  const theme = useTheme();
-  const dispatch = useAppDispatch();
-  const churchs = useAppSelector(ChurchSelectors.getChurchs);
-  const token = useAppSelector(PersonSelectors.accessToken);
-  const loading = useAppSelector(ChurchSelectors.loading);
+  const {canRender} = useRoleHook();
+  const {loading, createChurch, onSelectItem, churchs} =
+    useChurchList(navigation);
 
   useEffect(() => {
-    if (churchs.length === 0) {
-      dispatch(ChurchService.getChurchs(token));
+    if (canRender([ROLE.ADMIN])) {
+      navigation.setOptions({
+        headerRight: _headerRight(createChurch),
+      });
     }
   }, []);
-
-  const onSelectItem = (church: Church) => {
-    navigation.navigate(ChurchRoutes.details, {church});
-  };
-
-  const createChurch = () => {
-    navigation.navigate(ChurchRoutes.create);
-  };
 
   if (loading) {
     return (
@@ -48,9 +40,6 @@ const ChurchScreen = ({navigation}: Props) => {
 
   return (
     <View style={styles.container}>
-      <FlatButton onPress={createChurch}>
-        <Icon name="plus" size={25} color={theme.colors.text} />
-      </FlatButton>
       <ChurchList churchs={churchs} onSelectChurch={onSelectItem} />
     </View>
   );
