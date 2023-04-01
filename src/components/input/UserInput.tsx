@@ -14,7 +14,6 @@ import useUserInput, {
   MultiSelect,
   SingleSelect,
 } from './hooks/useUserInput';
-import Loading from '@/components/loading/loading';
 import NotchLoading from '@/components/loading/notch-loading';
 
 type Props = {
