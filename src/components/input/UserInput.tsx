@@ -1,22 +1,21 @@
 import {
-  Alert,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Theme} from '@react-navigation/native';
 import useTheme from 'theme/useTheme';
-import {Person} from '@prisma/client';
-import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
-import PersonSelectors from 'store/features/person/selectors';
-import PersonService from 'store/features/person/person-service';
-
-type SingleSelect = (person: number) => void;
-type MultiSelect = (persons: number[]) => void;
+import useUserInput, {
+  MiminalPerson,
+  MultiSelect,
+  SingleSelect,
+} from './hooks/useUserInput';
+import Loading from '@/components/loading/loading';
+import NotchLoading from '@/components/loading/notch-loading';
 
 type Props = {
   multipleSelection?: boolean;
@@ -25,11 +24,6 @@ type Props = {
   defaultSingleValue?: number;
   defaultMultiValue?: number[];
   label: string;
-};
-
-type MiminalPerson = {
-  id: number;
-  name: string;
 };
 
 type UserChipsProps = {
@@ -85,61 +79,25 @@ const UserInput = ({
   defaultSingleValue,
   defaultMultiValue,
 }: Props) => {
-  const dispatch = useAppDispatch();
-  const token = useAppSelector(PersonSelectors.accessToken);
-  const [person, setPerson] = useState<MiminalPerson | undefined>(undefined);
-  const [persons, setPersons] = useState<MiminalPerson[]>([]);
-  const [name, setName] = useState<string>('');
-  const [personsResult, setPersonsResult] = useState<Person[]>([]);
   const theme = useTheme();
 
-  useEffect(() => {
-    if (!multipleSelection && person && onSingleSelect) {
-      onSingleSelect(person.id);
-    }
-  }, [multipleSelection, person]);
-
-  useEffect(() => {
-    if (multipleSelection && persons.length > 0 && onMultiSelect) {
-      onMultiSelect(persons.map(p => p.id));
-    }
-  }, [multipleSelection, persons]);
-
-  useEffect(() => {
-    if (!multipleSelection && defaultMultiValue) {
-      setPersons([]);
-      //TODO dispatch to get minimal person
-    }
-  }, [multipleSelection, defaultSingleValue]);
-
-  useEffect(() => {
-    if (
-      multipleSelection &&
-      defaultMultiValue &&
-      defaultMultiValue.length > 0
-    ) {
-      setPerson(undefined);
-      //TODO dispatch to get minimal persons
-    }
-  }, [multipleSelection, defaultMultiValue]);
-
-  useEffect(() => {
-    (async () => {
-      if (name.length >= 3) {
-        const result = await dispatch(
-          PersonService.getPersonByNameOrNumber({token, filter: name}),
-        );
-        if (PersonService.getPersonByNameOrNumber.fulfilled.match(result)) {
-          const data = result.payload;
-          setPersonsResult(data);
-        } else {
-          Alert.alert('Houve um erro ao buscar os usuários');
-        }
-      } else {
-        setPersonsResult([]);
-      }
-    })();
-  }, [name]);
+  const {
+    name,
+    setName,
+    person,
+    setPerson,
+    persons,
+    setPersons,
+    personsResult,
+    setPersonsResult,
+    loading,
+  } = useUserInput(
+    multipleSelection,
+    onSingleSelect,
+    onMultiSelect,
+    defaultSingleValue,
+    defaultMultiValue,
+  );
 
   const textInput = (
     <TextInput
@@ -153,69 +111,79 @@ const UserInput = ({
   return (
     <View>
       <Text style={styles.label}>{label}:</Text>
-      <View style={[styles.inputView, {backgroundColor: theme.colors.card}]}>
-        {!multipleSelection && !person && textInput}
-        {!multipleSelection && person && (
-          <UserChips
-            persons={[person]}
-            theme={theme}
-            onRemove={() => setPerson(undefined)}
-          />
-        )}
-        {multipleSelection && (
-          <>
-            {persons.length > 0 && (
-              <UserChips
-                persons={persons}
-                theme={theme}
-                onRemove={personId => {
-                  setPersons(prevState =>
-                    prevState.filter(p => personId !== p.id),
-                  );
-                }}
-              />
-            )}
-            {textInput}
-          </>
-        )}
-        <View>
-          {personsResult.map((item, index) => {
-            const personToAdd = {id: item.id, name: item.name} as MiminalPerson;
-            return (
-              <View
-                key={index}
-                style={[
-                  styles.itemListPersons,
-                  {
-                    backgroundColor:
-                      index % 2 ? theme.colors.card : theme.colors.border,
-                  },
-                ]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    if (!multipleSelection) {
-                      setPerson(personToAdd);
-                      setPersonsResult([]);
-                      setPersons([]);
-                      setName('');
-                    } else {
-                      setPersons(prevState =>
-                        prevState
-                          .filter(p => p.id !== item.id)
-                          .concat([personToAdd]),
-                      );
-                      setPerson(undefined);
-                    }
-                  }}>
-                  <Text>
-                    {item.name} - {item.phoneNumber}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
+      {loading && (
+        <View style={styles.viewLoading}>
+          <NotchLoading size={30} />
         </View>
-      </View>
+      )}
+      {!loading && (
+        <View style={[styles.inputView, {backgroundColor: theme.colors.card}]}>
+          {!multipleSelection && !person && textInput}
+          {!multipleSelection && person && (
+            <UserChips
+              persons={[person]}
+              theme={theme}
+              onRemove={() => setPerson(undefined)}
+            />
+          )}
+          {multipleSelection && (
+            <>
+              {persons.length > 0 && (
+                <UserChips
+                  persons={persons}
+                  theme={theme}
+                  onRemove={personId => {
+                    setPersons(prevState => {
+                      return prevState.filter(p => p.id !== personId);
+                    });
+                  }}
+                />
+              )}
+              {textInput}
+            </>
+          )}
+          <View>
+            {personsResult.map((item, index) => {
+              const personToAdd = {
+                id: item.id,
+                name: item.name,
+              } as MiminalPerson;
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.itemListPersons,
+                    {
+                      backgroundColor:
+                        index % 2 ? theme.colors.card : theme.colors.border,
+                    },
+                  ]}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (!multipleSelection) {
+                        setPerson(personToAdd);
+                        setPersonsResult([]);
+                        setPersons([]);
+                        setName('');
+                      } else {
+                        setPersons(prevState =>
+                          prevState
+                            .filter(p => p.id !== item.id)
+                            .concat([personToAdd]),
+                        );
+                        setPerson(undefined);
+                      }
+                    }}>
+                    <Text>
+                      {item.name} - {item.phoneNumber}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -242,6 +210,11 @@ const styles = StyleSheet.create({
   input: {
     padding: 16,
     borderRadius: 8,
+  },
+  viewLoading: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });
 

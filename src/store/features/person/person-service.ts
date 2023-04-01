@@ -111,6 +111,19 @@ const getPersonByNameOrNumber = createAsyncThunk(
   },
 );
 
+const getPersonsByQuery = createAsyncThunk(
+  'person/getByQuery',
+  async (
+    {token, query}: {token: string; query: Prisma.PersonFindManyArgs},
+    {rejectWithValue},
+  ) => {
+    return await httpClient(token)
+      .post('/person/query', query)
+      .then(res => res.data)
+      .catch(rejectWithValue);
+  },
+);
+
 const PersonService = {
   requestCode,
   login,
@@ -119,6 +132,7 @@ const PersonService = {
   updateProfile,
   getDepartments,
   getPersonByNameOrNumber,
+  getPersonsByQuery,
 };
 
 export default PersonService;

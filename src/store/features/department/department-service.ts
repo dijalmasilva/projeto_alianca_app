@@ -1,6 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import httpClient from 'utils/http-client';
-import {Prisma} from '@prisma/client';
+import DepartmentCreateDto from 'models/department/deparment-create.dto';
+import DepartmentUpdateDto from 'models/department/department-update.dto';
 
 type DepartmentImNotIncludeType = {
   personId: number;
@@ -19,7 +20,7 @@ const getDepartmentsImNotIncluded = createAsyncThunk(
 
 type DepartmentCreateType = {
   token: string;
-  department: Prisma.DepartmentCreateInput;
+  department: DepartmentCreateDto;
 };
 
 const createDepartment = createAsyncThunk(
@@ -35,7 +36,7 @@ const createDepartment = createAsyncThunk(
 type DepartmentUpdateType = {
   token: string;
   departmentId: number;
-  department: Prisma.DepartmentUpdateInput;
+  department: DepartmentUpdateDto;
 };
 
 const updateDepartment = createAsyncThunk(
@@ -48,10 +49,26 @@ const updateDepartment = createAsyncThunk(
   },
 );
 
+type MembersIdFromDepartmentType = {
+  token: string;
+  departmentId: number;
+};
+
+const getMembersIdFromDepartment = createAsyncThunk(
+  'department/membersId',
+  async (props: MembersIdFromDepartmentType, {rejectWithValue}) => {
+    return await httpClient(props.token)
+      .get(`/department/${props.departmentId}/membersId`)
+      .then(res => res.data as number[])
+      .catch(rejectWithValue);
+  },
+);
+
 const DepartmentService = {
   createDepartment,
   updateDepartment,
   getDepartmentsImNotIncluded,
+  getMembersIdFromDepartment,
 };
 
 export default DepartmentService;

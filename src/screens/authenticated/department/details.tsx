@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, Text} from 'react-native';
+import {ScrollView, StyleSheet, Text} from 'react-native';
 import ViewContainer from '@/components/container/ViewContainer';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {Department} from '@prisma/client';
@@ -33,37 +33,51 @@ const DepartmentDetailScreen = ({route, navigation}: Props) => {
     onChangeLeader,
     onChangeMembers,
     onSubmit,
+    departmentState,
   } = useUpdateDepartment(navigation, department);
 
   return (
     <ScrollView>
-      <ViewContainer style={{gap: 8}}>
+      <ViewContainer style={styles.container}>
         <Input
           label="Nome do departamento"
           onChangeText={onChangeName}
-          defaultValue={department.name}
+          defaultValue={departmentState.name}
         />
         <Input
           label="Descrição"
           onChangeText={onChangeDescription}
-          defaultValue={department.description || ''}
+          defaultValue={departmentState.description || ''}
         />
         <UserInput
           onSingleSelect={onChangeLeader}
           label="Líder do departamento"
-          defaultSingleValue={department.leaderId}
+          defaultSingleValue={departmentState.leaderId}
         />
         <UserInput
           multipleSelection
           onMultiSelect={onChangeMembers}
           label="Membros do departamento"
+          defaultMultiValue={departmentState.members || []}
         />
-        <Button onPress={onSubmit}>
-          <Text>Atualizar</Text>
+        <Button style={styles.btUpdate} onPress={onSubmit}>
+          <Text style={styles.textBt}>Atualizar</Text>
         </Button>
       </ViewContainer>
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 8,
+  },
+  btUpdate: {
+    marginTop: 16,
+  },
+  textBt: {
+    textTransform: 'uppercase',
+  },
+});
 
 export default DepartmentDetailScreen;

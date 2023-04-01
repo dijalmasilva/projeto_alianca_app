@@ -59,7 +59,7 @@ const SelectChurchModal = ({onSelect, placeholder, selected}: Props) => {
         )}
         {selected && (
           <Text style={[{color: theme.colors.text}, styles.textSelected]}>
-            {churchs.find(c => c.id === selected)?.description}
+            {churchs.find(c => c.id === selected)?.name}
           </Text>
         )}
       </TouchableOpacity>

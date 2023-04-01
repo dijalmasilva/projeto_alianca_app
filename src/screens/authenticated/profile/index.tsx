@@ -1,132 +1,84 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
-  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
-import PersonService from 'store/features/person/person-service';
-import {PersonActions} from 'store/features/person/person';
 import {NavigationProp} from '@react-navigation/native';
 import Avatar from '@/components/avatar/Avatar';
 import Input from '@/components/input/Input';
 import Button from '@/components/button/Button';
-import {PrivateRoutes, PublicRoutes} from 'routes';
 import SwitchWrapper from '@/components/switch/SwitchWrapper';
 import CalendarBirthday from '@/components/calendar/CalendarBirthday';
 import {format} from 'date-fns/esm';
 import {DATE_FORMATS} from '@/components/calendar/calendar.config';
-import {ROLE} from 'constants/roles.constants';
-import PersonSelectors from 'store/features/person/selectors';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {_storeToken} from 'utils/storage';
+import useUpdateProfile from './hooks/useUpdateProfile';
+import useTheme from 'theme/useTheme';
+import ViewContainer from '@/components/container/ViewContainer';
+import NotchLoading from '@/components/loading/notch-loading';
 
 type Props = {
   navigation: NavigationProp<any>;
 };
 
+type ButtonLogoutProps = {
+  logout: () => void;
+};
+
+const ButtonLogout = ({logout}: ButtonLogoutProps) => {
+  const theme = useTheme();
+
+  return (
+    <TouchableOpacity
+      onPress={logout}
+      style={[stylesButton.button, {backgroundColor: theme.colors.primary}]}>
+      <Icon name="sign-out" size={20} color="#fff" />
+    </TouchableOpacity>
+  );
+};
+
+const stylesButton = StyleSheet.create({
+  button: {
+    padding: 8,
+    borderRadius: 50,
+    width: 'auto',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+});
+
+const _buttonLogout = (logout: () => void) => () =>
+  <ButtonLogout logout={logout} />;
+
 const ProfileScreen = ({navigation}: Props) => {
-  const dispatch = useAppDispatch();
-  const profile = useAppSelector(PersonSelectors.profile);
-  const token = useAppSelector(PersonSelectors.accessToken);
-  const loading = useAppSelector(PersonSelectors.loading);
-
-  const [profileState, setProfileState] = useState(profile);
-
-  useEffect(() => {
-    if (!profile.name) {
-      dispatch(PersonService.getProfile(token));
-    }
-  }, []);
+  const {
+    loading,
+    profileState,
+    onChangeAlliance,
+    onChangeBirthday,
+    onChangeName,
+    logout,
+    onSubmit,
+  } = useUpdateProfile(navigation);
 
   useEffect(() => {
-    setProfileState(profile);
-  }, [profile]);
-
-  const validateForm = () => {
-    if (!profileState.name) {
-      Alert.alert('Por favor, insira o nome completo.');
-      return false;
-    }
-
-    if (!profileState.birthday) {
-      Alert.alert('Por favor, selecione sua data de nascimento.');
-      return false;
-    }
-
-    return true;
-  };
-
-  const onChangeName = (value: string) => {
-    setProfileState({...profileState, name: value});
-  };
-
-  const onChangeBirthday = (value: string) => {
-    setProfileState({...profileState, birthday: value});
-  };
-
-  const onChangeAlliance = (value: boolean) => {
-    //remove first VISITOR and SHEEP to add after
-    const roles = profileState.roles.filter(
-      r => r !== ROLE.SHEEP && r !== ROLE.VISITOR,
-    );
-    if (value) {
-      setProfileState({
-        ...profileState,
-        hasAlliance: value,
-        roles: [...roles, ROLE.SHEEP].filter(r => r !== ROLE.VISITOR),
-      });
-    } else {
-      setProfileState({
-        ...profileState,
-        hasAlliance: value,
-        roles: [...roles, ROLE.VISITOR].filter(r => r !== ROLE.SHEEP),
+    if (profileState.id) {
+      navigation.setOptions({
+        headerRight: _buttonLogout(logout),
       });
     }
-  };
-
-  const logout = async () => {
-    await dispatch(PersonService.logout(token));
-    await _storeToken('');
-    navigation.navigate(PublicRoutes.login);
-  };
-
-  const onSubmit = async () => {
-    if (validateForm()) {
-      const {departmentsAsLeader, departmentsAsMember, ...profileResult} =
-        profileState;
-      const result = await dispatch(
-        PersonService.updateProfile({
-          accessToken: token,
-          id: profileState.id,
-          person: {
-            ...profileResult,
-          },
-        }),
-      );
-      if (PersonService.updateProfile.fulfilled.match(result)) {
-        dispatch(
-          PersonActions.updateMe({
-            ...result.payload,
-            departmentsAsMember,
-            departmentsAsLeader,
-          }),
-        );
-        navigation.navigate(PrivateRoutes.home);
-      } else {
-        Alert.alert(result.payload as string);
-      }
-    }
-  };
+  }, [profileState]);
 
   if (loading) {
     return (
-      <View style={styles.viewLoading}>
-        <Text>Carregando os dados...</Text>
-      </View>
+      <ViewContainer center>
+        <NotchLoading size={50} />
+      </ViewContainer>
     );
   }
 
@@ -136,19 +88,6 @@ const ProfileScreen = ({navigation}: Props) => {
         <View style={styles.profileView}>
           <View style={styles.viewAvatar}>
             <Avatar size={120} name={profileState.name} />
-            <Button
-              style={{
-                gap: 8,
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              onPress={logout}>
-              <Text style={{fontSize: 24, textTransform: 'uppercase'}}>
-                Sair
-              </Text>
-              <Icon name="sign-out" size={30} />
-            </Button>
           </View>
           <View style={styles.formView}>
             <Input
@@ -192,10 +131,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileView: {
-    width: '100%',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',
     gap: 28,
+    padding: 16,
   },
   viewAvatar: {
     alignItems: 'center',
