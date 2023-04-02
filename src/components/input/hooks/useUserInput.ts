@@ -54,7 +54,12 @@ const useUserInput: UserInputHookType = (
   }, [multipleSelection, person]);
 
   useEffect(() => {
-    if (multipleSelection && persons.length > 0 && onMultiSelect) {
+    if (multipleSelection && onMultiSelect) {
+      if (persons.length === 0) {
+        onMultiSelect([]);
+        return;
+      }
+
       onMultiSelect(persons.map(p => p.id));
     }
   }, [multipleSelection, persons]);
@@ -78,7 +83,6 @@ const useUserInput: UserInputHookType = (
 
     if (PersonService.getPersonsByQuery.fulfilled.match(result)) {
       const data = result.payload;
-      console.log(`getSinglePerson: ${JSON.stringify(data, null, 2)} `);
       setPerson(data[0]);
     }
   };
@@ -101,27 +105,35 @@ const useUserInput: UserInputHookType = (
 
     if (PersonService.getPersonsByQuery.fulfilled.match(result)) {
       const data = result.payload;
-      console.log(`getMultiPersons: ${JSON.stringify(data, null, 2)} `);
       setPersons(data);
     }
   };
 
   useEffect(() => {
-    if (!loaded) {
-      if (!multipleSelection && defaultSingleValue) {
-        loadSinglePerson().then(() => setLoaded(true));
-        return;
-      }
-
-      if (
-        multipleSelection &&
-        defaultMultiValue &&
-        defaultMultiValue.length > 0
-      ) {
-        loadMultiPersons().then(() => setLoaded(true));
-      }
+    if (loaded) {
+      return;
     }
-  }, [defaultSingleValue, defaultMultiValue, loaded]);
+
+    if (multipleSelection && defaultMultiValue?.length) {
+      loadMultiPersons().then(() => setLoaded(true));
+      return;
+    }
+
+    if (!multipleSelection) {
+      loadSinglePerson().then(() => setLoaded(true));
+      return;
+    }
+
+    if (!defaultSingleValue && !defaultMultiValue?.length) {
+      setLoaded(true);
+    }
+  }, [loaded, multipleSelection]);
+
+  useEffect(() => {
+    if (persons.length !== defaultMultiValue?.length) {
+      setLoaded(false);
+    }
+  }, [defaultMultiValue]);
 
   useEffect(() => {
     (async () => {

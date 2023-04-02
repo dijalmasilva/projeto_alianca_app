@@ -64,8 +64,10 @@ const useUpdateDepartment = (
   const onChangeLeader = (leaderId: number) =>
     onChangeDepartment('leaderId', leaderId);
 
-  const onChangeMembers = (newMembers: number[]) =>
+  const onChangeMembers = (newMembers: number[]) => {
+    console.log('newMembers: ', newMembers);
     onChangeDepartment('members', newMembers);
+  };
 
   const onSubmit = async () => {
     const resultUpdate = await dispatch(

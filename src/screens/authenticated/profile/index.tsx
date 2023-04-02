@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -64,6 +65,9 @@ const ProfileScreen = ({navigation}: Props) => {
     onChangeName,
     logout,
     onSubmit,
+    loadProfile,
+    refreshing,
+    setRefreshing,
   } = useUpdateProfile(navigation);
 
   useEffect(() => {
@@ -84,7 +88,17 @@ const ProfileScreen = ({navigation}: Props) => {
 
   return (
     <SafeAreaView style={styles.keepWidth}>
-      <ScrollView style={styles.keepWidth}>
+      <ScrollView
+        style={styles.keepWidth}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              loadProfile().finally(() => setRefreshing(false));
+            }}
+          />
+        }>
         <View style={styles.profileView}>
           <View style={styles.viewAvatar}>
             <Avatar size={120} name={profileState.name} />

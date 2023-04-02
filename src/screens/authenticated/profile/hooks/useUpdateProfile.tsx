@@ -14,12 +14,17 @@ const useUpdateProfile = (navigation: NavigationProp<any>) => {
   const profile = useAppSelector(PersonSelectors.profile);
   const token = useAppSelector(PersonSelectors.accessToken);
   const loading = useAppSelector(PersonSelectors.loading);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const [profileState, setProfileState] = useState(profile);
 
+  const loadProfile = async () => {
+    dispatch(PersonService.getProfile(token));
+  };
+
   useEffect(() => {
     if (!profile.name) {
-      dispatch(PersonService.getProfile(token));
+      loadProfile().then(() => console.log('profile loaded'));
     }
   }, []);
 
@@ -121,6 +126,9 @@ const useUpdateProfile = (navigation: NavigationProp<any>) => {
     onChangeBirthday,
     onChangeAlliance,
     onSubmit,
+    refreshing,
+    setRefreshing,
+    loadProfile,
   };
 };
 
