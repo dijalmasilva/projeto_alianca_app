@@ -28,7 +28,6 @@ const useUpdateDepartment = (
 
   useEffect(() => {
     (async () => {
-      console.log('get members id from department: ', department.id);
       await dispatch(DepartmentActions.setLoading(true));
       const membersIdResult = await dispatch(
         DepartmentService.getMembersIdFromDepartment({
@@ -42,7 +41,6 @@ const useUpdateDepartment = (
           membersIdResult,
         )
       ) {
-        console.log('membersIdResult: ', membersIdResult.payload);
         onChangeMembers(membersIdResult.payload);
       } else {
         Alert.alert(

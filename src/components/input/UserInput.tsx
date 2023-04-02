@@ -23,14 +23,21 @@ type Props = {
   defaultSingleValue?: number;
   defaultMultiValue?: number[];
   label: string;
+  editable?: boolean;
 };
 
 type UserChipsProps = {
   persons: MiminalPerson[];
   theme: Theme;
   onRemove: (personId: number) => void;
+  canRemove?: boolean;
 };
-const UserChips = ({persons, theme, onRemove}: UserChipsProps) => {
+const UserChips = ({
+  persons,
+  theme,
+  onRemove,
+  canRemove = true,
+}: UserChipsProps) => {
   return (
     <View style={chipsStyles.chipView}>
       {persons.map(person => {
@@ -42,9 +49,11 @@ const UserChips = ({persons, theme, onRemove}: UserChipsProps) => {
               {backgroundColor: theme.colors.primary},
             ]}>
             <Text style={{color: theme.colors.text}}>{person.name}</Text>
-            <TouchableOpacity onPress={() => onRemove(person.id)}>
-              <Icon color={theme.colors.text} name="trash" size={20} />
-            </TouchableOpacity>
+            {canRemove && (
+              <TouchableOpacity onPress={() => onRemove(person.id)}>
+                <Icon color={theme.colors.text} name="trash" size={20} />
+              </TouchableOpacity>
+            )}
           </View>
         );
       })}
@@ -77,6 +86,7 @@ const UserInput = ({
   label,
   defaultSingleValue,
   defaultMultiValue,
+  editable = false,
 }: Props) => {
   const theme = useTheme();
 
@@ -117,12 +127,13 @@ const UserInput = ({
       )}
       {!loading && (
         <View style={[styles.inputView, {backgroundColor: theme.colors.card}]}>
-          {!multipleSelection && !person && textInput}
+          {!multipleSelection && !person && editable && textInput}
           {!multipleSelection && person && (
             <UserChips
               persons={[person]}
               theme={theme}
               onRemove={() => setPerson(undefined)}
+              canRemove={editable}
             />
           )}
           {multipleSelection && (
@@ -136,9 +147,10 @@ const UserInput = ({
                       return prevState.filter(p => p.id !== personId);
                     });
                   }}
+                  canRemove={editable}
                 />
               )}
-              {textInput}
+              {editable && textInput}
             </>
           )}
           <View>

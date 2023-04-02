@@ -7,6 +7,10 @@ import Input from '@/components/input/Input';
 import UserInput from '@/components/input/UserInput';
 import Button from '@/components/button/Button';
 import useUpdateDepartment from '@/screens/authenticated/department/hooks/useUpdateDepartment';
+import {useAppSelector} from '@/hooks/store-hook';
+import PersonSelectors from 'store/features/person/selectors';
+import useRoleHook from '@/hooks/useRoleHook';
+import {ROLE} from 'constants/roles.constants';
 
 type RouteParams = {
   department: Department;
@@ -17,6 +21,8 @@ type Props = {
   route: RouteProp<any>;
 };
 const DepartmentDetailScreen = ({route, navigation}: Props) => {
+  const {canRender} = useRoleHook();
+  const profile = useAppSelector(PersonSelectors.profile);
   const department = route.params
     ? (route.params as RouteParams).department
     : ({
@@ -36,6 +42,9 @@ const DepartmentDetailScreen = ({route, navigation}: Props) => {
     departmentState,
   } = useUpdateDepartment(navigation, department);
 
+  const isLeader = profile?.id === department.leaderId;
+  const isAdminOrPastor = canRender([ROLE.PASTOR, ROLE.ADMIN]);
+
   return (
     <ScrollView>
       <ViewContainer style={styles.container}>
@@ -43,26 +52,32 @@ const DepartmentDetailScreen = ({route, navigation}: Props) => {
           label="Nome do departamento"
           onChangeText={onChangeName}
           defaultValue={departmentState.name}
+          editable={isLeader || isAdminOrPastor}
         />
         <Input
           label="Descrição"
           onChangeText={onChangeDescription}
           defaultValue={departmentState.description || ''}
+          editable={isLeader || isAdminOrPastor}
         />
         <UserInput
           onSingleSelect={onChangeLeader}
           label="Líder do departamento"
           defaultSingleValue={departmentState.leaderId}
+          editable={isLeader || isAdminOrPastor}
         />
         <UserInput
           multipleSelection
           onMultiSelect={onChangeMembers}
           label="Membros do departamento"
           defaultMultiValue={departmentState.members || []}
+          editable={isLeader || isAdminOrPastor}
         />
-        <Button style={styles.btUpdate} onPress={onSubmit}>
-          <Text style={styles.textBt}>Atualizar</Text>
-        </Button>
+        {(isLeader || isAdminOrPastor) && (
+          <Button style={styles.btUpdate} onPress={onSubmit}>
+            <Text style={styles.textBt}>Atualizar</Text>
+          </Button>
+        )}
       </ViewContainer>
     </ScrollView>
   );
