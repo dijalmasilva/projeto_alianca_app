@@ -82,7 +82,15 @@ const personSlice = createSlice({
     });
     builder.addCase(PersonService.getProfile.fulfilled, (state, action) => {
       state.loading = false;
-      state.me = {...state.me, ...action.payload};
+      const {data, headers} = action.payload;
+      const token = headers['x-auth-token'];
+      if (token) {
+        state.auth.accessToken = token;
+        (async () => {
+          await _storeToken(token);
+        })();
+      }
+      state.me = {...state.me, ...data};
     });
     builder.addCase(PersonService.getProfile.rejected, state => {
       state.loading = false;

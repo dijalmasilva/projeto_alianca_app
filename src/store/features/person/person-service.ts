@@ -48,7 +48,7 @@ const getProfile = createAsyncThunk(
   async (accessToken: string, {rejectWithValue}) => {
     return await httpClient(accessToken)
       .post('/auth/profile')
-      .then(res => res.data)
+      .then(res => res)
       .catch(() => {
         return rejectWithValue('Error ao carregar dados do perfil');
       });

@@ -63,7 +63,6 @@ const useUpdateDepartment = (
     onChangeDepartment('leaderId', leaderId);
 
   const onChangeMembers = (newMembers: number[]) => {
-    console.log('newMembers: ', newMembers);
     onChangeDepartment('members', newMembers);
   };
 
