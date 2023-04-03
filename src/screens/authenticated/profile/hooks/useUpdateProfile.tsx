@@ -24,7 +24,9 @@ const useUpdateProfile = (navigation: NavigationProp<any>) => {
 
   useEffect(() => {
     if (!profile.name) {
-      loadProfile().then(() => console.log('profile loaded'));
+      (async () => {
+        await loadProfile();
+      })();
     }
   }, []);
 

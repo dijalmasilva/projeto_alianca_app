@@ -36,11 +36,13 @@ const DepartmentCreateScreen = ({navigation}: Props) => {
         <UserInput
           onSingleSelect={onChangeLeader}
           label="Líder do departamento"
+          editable
         />
         <UserInput
           multipleSelection
           onMultiSelect={onChangeMembers}
           label="Membros do departamento"
+          editable
         />
         <Button onPress={onSubmit}>
           <Text>CADASTRAR</Text>

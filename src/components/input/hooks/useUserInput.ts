@@ -114,23 +114,30 @@ const useUserInput: UserInputHookType = (
       return;
     }
 
-    if (multipleSelection && defaultMultiValue?.length) {
+    if (
+      multipleSelection &&
+      defaultMultiValue &&
+      defaultMultiValue.length > 0
+    ) {
       loadMultiPersons().then(() => setLoaded(true));
       return;
     }
 
-    if (!multipleSelection) {
+    if (!multipleSelection && defaultSingleValue) {
       loadSinglePerson().then(() => setLoaded(true));
       return;
     }
 
-    if (!defaultSingleValue && !defaultMultiValue?.length) {
+    if (
+      !defaultSingleValue &&
+      (!defaultMultiValue || defaultMultiValue.length === 0)
+    ) {
       setLoaded(true);
     }
   }, [loaded, multipleSelection]);
 
   useEffect(() => {
-    if (persons.length !== defaultMultiValue?.length) {
+    if (defaultMultiValue && persons.length !== defaultMultiValue.length) {
       setLoaded(false);
     }
   }, [defaultMultiValue]);
