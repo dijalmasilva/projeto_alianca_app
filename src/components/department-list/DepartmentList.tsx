@@ -9,7 +9,6 @@ import {
   ViewStyle,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import EntypoIcon from 'react-native-vector-icons/Entypo';
 import useTheme from 'theme/useTheme';
 import EmptyList from '@/components/empty-list/EmptyList';
 

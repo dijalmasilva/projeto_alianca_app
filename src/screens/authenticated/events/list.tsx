@@ -21,8 +21,7 @@ type Props = {
 };
 
 const EventListScreen = ({navigation}: Props) => {
-  const {createEvent, refreshing, events, loadEventsByDay} =
-    useListEvents(navigation);
+  const {createEvent, refreshing, loadEventsByDay} = useListEvents(navigation);
   const {canRender} = useRoleHook(useAppSelector(PersonSelectors.roles));
 
   useEffect(() => {

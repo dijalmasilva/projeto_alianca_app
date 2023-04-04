@@ -6,7 +6,6 @@ import {Alert} from 'react-native';
 import PersonSelectors from 'store/features/person/selectors';
 import EventService from 'store/features/event/event-service';
 import {NavigationProp} from '@react-navigation/native';
-import {EventRoutes} from '@/screens/authenticated/events/root';
 
 const useCreateEvent = (navigation: NavigationProp<any>) => {
   const dispatch = useAppDispatch();
