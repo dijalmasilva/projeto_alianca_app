@@ -2,7 +2,7 @@ import React from 'react';
 import {ScrollView, StyleSheet, Text} from 'react-native';
 import ViewContainer from '@/components/container/ViewContainer';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
-import {Department} from '@prisma/client';
+import {Department, Role} from '@prisma/client';
 import Input from '@/components/input/Input';
 import UserInput from '@/components/input/UserInput';
 import Button from '@/components/button/Button';
@@ -10,7 +10,6 @@ import useUpdateDepartment from '@/screens/authenticated/department/hooks/useUpd
 import {useAppSelector} from '@/hooks/store-hook';
 import PersonSelectors from 'store/features/person/selectors';
 import useRoleHook from '@/hooks/useRoleHook';
-import {ROLE} from 'constants/roles.constants';
 
 type RouteParams = {
   department: Department;
@@ -21,7 +20,7 @@ type Props = {
   route: RouteProp<any>;
 };
 const DepartmentDetailScreen = ({route, navigation}: Props) => {
-  const {canRender} = useRoleHook();
+  const {canRender} = useRoleHook(useAppSelector(PersonSelectors.roles));
   const profile = useAppSelector(PersonSelectors.profile);
   const department = route.params
     ? (route.params as RouteParams).department
@@ -43,7 +42,7 @@ const DepartmentDetailScreen = ({route, navigation}: Props) => {
   } = useUpdateDepartment(navigation, department);
 
   const isLeader = profile?.id === department.leaderId;
-  const isAdminOrPastor = canRender([ROLE.PASTOR, ROLE.ADMIN]);
+  const isAdminOrPastor = canRender([Role.PASTOR, Role.ADMIN]);
 
   return (
     <ScrollView>
@@ -59,6 +58,9 @@ const DepartmentDetailScreen = ({route, navigation}: Props) => {
           onChangeText={onChangeDescription}
           defaultValue={departmentState.description || ''}
           editable={isLeader || isAdminOrPastor}
+          multiline
+          numberOfLines={4}
+          textAlignVertical="top"
         />
         <UserInput
           onSingleSelect={onChangeLeader}

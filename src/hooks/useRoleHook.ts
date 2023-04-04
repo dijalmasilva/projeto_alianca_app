@@ -1,14 +1,16 @@
-import {ROLE} from 'constants/roles.constants';
-import {useAppSelector} from '@/hooks/store-hook';
-import PersonSelectors from 'store/features/person/selectors';
+import {Role} from '@prisma/client';
+import {useCallback} from 'react';
 
-const useRoleHook = () => {
-  const roles = useAppSelector(PersonSelectors.roles);
-
-  return {
-    canRender: (accepteds: ROLE[]): boolean => {
+const useRoleHook = (roles: Role[]) => {
+  const canRender = useCallback(
+    (accepteds: Role[]): boolean => {
       return !!accepteds.find(a => roles.includes(a));
     },
+    [roles],
+  );
+
+  return {
+    canRender,
   };
 };
 

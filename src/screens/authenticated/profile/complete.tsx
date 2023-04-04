@@ -20,9 +20,8 @@ import CalendarBirthday from '@/components/calendar/CalendarBirthday';
 import {format} from 'date-fns/esm';
 import {DATE_FORMATS} from '@/components/calendar/calendar.config';
 import SelectChurchModal from '@/components/select/select-church-modal';
-import {ROLE} from 'constants/roles.constants';
 import PersonSelectors from 'store/features/person/selectors';
-import {Church} from '@prisma/client';
+import {Church, Role} from '@prisma/client';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -79,19 +78,19 @@ const ProfileCompleteScreen = ({navigation}: Props) => {
   const onChangeAlliance = (value: boolean) => {
     //remove first VISITOR and SHEEP to add after
     const roles = profileState.roles.filter(
-      r => r !== ROLE.SHEEP && r !== ROLE.VISITOR,
+      r => r !== Role.OVELHA && r !== Role.VISITANTE,
     );
     if (value) {
       setProfileState({
         ...profileState,
         hasAlliance: value,
-        roles: [...roles, ROLE.SHEEP].filter(r => r !== ROLE.VISITOR),
+        roles: [...roles, Role.OVELHA].filter(r => r !== Role.VISITANTE),
       });
     } else {
       setProfileState({
         ...profileState,
         hasAlliance: value,
-        roles: [...roles, ROLE.VISITOR].filter(r => r !== ROLE.SHEEP),
+        roles: [...roles, Role.VISITANTE].filter(r => r !== Role.OVELHA),
       });
     }
   };

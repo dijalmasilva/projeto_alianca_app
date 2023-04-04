@@ -11,6 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import useTheme from 'theme/useTheme';
+import EmptyList from '@/components/empty-list/EmptyList';
 
 type Props = {
   // Define Props type for DepartmentSummary
@@ -72,12 +73,7 @@ const DepartmentList: React.FC<ListProps> = ({departments, onSelect}) => {
   const isEmpty = departments.length === 0;
 
   if (isEmpty) {
-    return (
-      <View style={styles.emptyContainer}>
-        <EntypoIcon name="text-document" size={25} />
-        <Text>Lista vazia</Text>
-      </View>
-    );
+    return <EmptyList text="Lista vazia" />;
   }
 
   return (
@@ -100,10 +96,6 @@ const DepartmentList: React.FC<ListProps> = ({departments, onSelect}) => {
 const styles = StyleSheet.create({
   listContainer: {
     marginVertical: 8,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    marginVertical: 16,
   },
 });
 

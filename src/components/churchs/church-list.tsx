@@ -3,6 +3,7 @@ import {Church} from '@prisma/client';
 import React from 'react';
 import useTheme from 'theme/useTheme';
 import Avatar from '@/components/avatar/Avatar';
+import EmptyList from '@/components/empty-list/EmptyList';
 
 type ChurchListProps = {
   churchs: Church[];
@@ -11,6 +12,10 @@ type ChurchListProps = {
 
 const ChurchList = ({churchs, onSelectChurch}: ChurchListProps) => {
   const theme = useTheme();
+
+  if (churchs.length === 0) {
+    return <EmptyList text="Não há igrejas cadastradas" />;
+  }
 
   return (
     <View>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, Text} from 'react-native';
+import {ScrollView, StyleSheet, Text} from 'react-native';
 import ViewContainer from '@/components/container/ViewContainer';
 import {NavigationProp} from '@react-navigation/native';
 import Input from '@/components/input/Input';
@@ -22,7 +22,7 @@ const DepartmentCreateScreen = ({navigation}: Props) => {
 
   return (
     <ScrollView>
-      <ViewContainer style={{gap: 8}}>
+      <ViewContainer style={styles.viewContainer}>
         <Input
           label="Nome do departamento"
           onChangeText={onChangeName}
@@ -32,6 +32,9 @@ const DepartmentCreateScreen = ({navigation}: Props) => {
           label="Descrição"
           onChangeText={onChangeDescription}
           defaultValue={departmentState.description || ''}
+          multiline
+          numberOfLines={4}
+          textAlignVertical="top"
         />
         <UserInput
           onSingleSelect={onChangeLeader}
@@ -51,5 +54,11 @@ const DepartmentCreateScreen = ({navigation}: Props) => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  viewContainer: {
+    gap: 8,
+  },
+});
 
 export default DepartmentCreateScreen;

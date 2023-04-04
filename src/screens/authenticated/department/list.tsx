@@ -2,13 +2,15 @@ import React, {useEffect} from 'react';
 import {RefreshControl, ScrollView, StyleSheet, Text, View} from 'react-native';
 import ViewContainer from '@/components/container/ViewContainer';
 import RoleView from '@/components/role-view/RoleView';
-import {ROLE} from 'constants/roles.constants';
 import {NavigationProp} from '@react-navigation/native';
 import DepartmentList from '@/components/department-list/DepartmentList';
 import NotchLoading from '@/components/loading/notch-loading';
 import useListDepartment from '@/screens/authenticated/department/hooks/useListDepartment';
 import HeaderButton from '@/components/button/HeaderButton';
 import useRoleHook from '@/hooks/useRoleHook';
+import {useAppSelector} from '@/hooks/store-hook';
+import PersonSelectors from 'store/features/person/selectors';
+import {Role} from '@prisma/client';
 
 type Props = {
   navigation: NavigationProp<any>;
@@ -18,7 +20,7 @@ const _headerRight = (onPress: () => void) => () =>
   <HeaderButton onPress={onPress} />;
 
 const DepartmentsScreen = ({navigation}: Props) => {
-  const {canRender} = useRoleHook();
+  const {canRender} = useRoleHook(useAppSelector(PersonSelectors.roles));
   const {
     departmentsAsLeader,
     departmentsAsMember,
@@ -32,7 +34,7 @@ const DepartmentsScreen = ({navigation}: Props) => {
   } = useListDepartment(navigation);
 
   useEffect(() => {
-    if (canRender([ROLE.ADMIN, ROLE.PASTOR])) {
+    if (canRender([Role.ADMIN, Role.PASTOR])) {
       navigation.setOptions({
         headerRight: _headerRight(createDepartment),
       });
@@ -70,7 +72,7 @@ const DepartmentsScreen = ({navigation}: Props) => {
           departments={departmentsAsMember}
           onSelect={seeDetails}
         />
-        <RoleView accepteds={[ROLE.ADMIN]}>
+        <RoleView accepteds={[Role.ADMIN]}>
           <Text>Outros departamentos</Text>
           <Text style={styles.span}>
             Visualização apenas para administradores

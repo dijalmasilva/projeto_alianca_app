@@ -86,7 +86,7 @@ const UserInput = ({
   label,
   defaultSingleValue,
   defaultMultiValue,
-  editable = false,
+  editable = true,
 }: Props) => {
   const theme = useTheme();
 

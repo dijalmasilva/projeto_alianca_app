@@ -4,10 +4,9 @@ import DepartmentSelectors from 'store/features/department/selectors';
 import useRoleHook from '@/hooks/useRoleHook';
 import {useEffect, useState} from 'react';
 import PersonService from 'store/features/person/person-service';
-import {ROLE} from 'constants/roles.constants';
 import DepartmentService from 'store/features/department/department-service';
 import {DepartmentRoutes} from '@/screens/authenticated/department/root';
-import {Department} from '@prisma/client';
+import {Department, Role} from '@prisma/client';
 import {NavigationProp} from '@react-navigation/native';
 
 const useListDepartment = (navigation: NavigationProp<any>) => {
@@ -20,11 +19,11 @@ const useListDepartment = (navigation: NavigationProp<any>) => {
     DepartmentSelectors.getDepartmentsOnUserLoggedWasNotIncluded,
   );
   const {departmentsAsLeader, departmentsAsMember} = profile;
-  const roleHook = useRoleHook();
+  const roleHook = useRoleHook(useAppSelector(PersonSelectors.roles));
 
   const loadDepartments = async () => {
     await dispatch(PersonService.getDepartments({personId: profile.id, token}));
-    if (roleHook.canRender([ROLE.ADMIN])) {
+    if (roleHook.canRender([Role.ADMIN])) {
       await dispatch(
         DepartmentService.getDepartmentsImNotIncluded({
           token,

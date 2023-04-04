@@ -1,12 +1,10 @@
 import React, {useEffect} from 'react';
-import AgendaScreen from '@/screens/authenticated/agenda';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ProfileScreen from '@/screens/authenticated/profile';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import {Platform} from 'react-native';
-import {ROLE} from 'constants/roles.constants';
 import useRoleHook from '@/hooks/useRoleHook';
 import ChurchRootScreen from '@/screens/authenticated/church/root';
 import DepartmentRootScreen from '@/screens/authenticated/department/root';
@@ -14,6 +12,8 @@ import {useAppDispatch, useAppSelector} from '@/hooks/store-hook';
 import PersonSelectors from 'store/features/person/selectors';
 import PersonService from 'store/features/person/person-service';
 import BibleScreen from '@/screens/authenticated/bible';
+import EventRootScreen from '@/screens/authenticated/events/root';
+import {Role} from '@prisma/client';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,7 +48,7 @@ export enum AuthenticatedRoutes {
 }
 
 const AuthenticatedRootScreen = () => {
-  const {canRender} = useRoleHook();
+  const {canRender} = useRoleHook(useAppSelector(PersonSelectors.roles));
   const dispatch = useAppDispatch();
   const token = useAppSelector(PersonSelectors.accessToken);
   const profile = useAppSelector(PersonSelectors.profile);
@@ -72,19 +72,20 @@ const AuthenticatedRootScreen = () => {
       }}>
       <Tab.Screen
         name={AuthenticatedRoutes.agenda}
-        component={AgendaScreen}
+        component={EventRootScreen}
         options={{
           title: 'Eventos',
+          headerShown: false,
           tabBarIcon: IconCalendar,
         }}
       />
       {canRender([
-        ROLE.ADMIN,
-        ROLE.PASTOR,
-        ROLE.LEVITE,
-        ROLE.DEACON,
-        ROLE.LEADER,
-        ROLE.COOPERATOR,
+        Role.ADMIN,
+        Role.PASTOR,
+        Role.LEVITA,
+        Role.DIACONO,
+        Role.LIDER,
+        Role.COOPERADOR,
       ]) && (
         <Tab.Screen
           name={AuthenticatedRoutes.departments}
@@ -96,7 +97,7 @@ const AuthenticatedRootScreen = () => {
           }}
         />
       )}
-      {canRender([ROLE.ADMIN, ROLE.PASTOR]) && (
+      {canRender([Role.ADMIN, Role.PASTOR]) && (
         <Tab.Screen
           name={AuthenticatedRoutes.churchs}
           component={ChurchRootScreen}
